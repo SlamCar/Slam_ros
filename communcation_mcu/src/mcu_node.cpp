@@ -1,3 +1,6 @@
+/** 
+ * Copyright (c) 2018 old_wang Inc. All rights reserved. 
+ */
 #include "Communcation.hpp"
 #include <ros/ros.h>
 
@@ -11,10 +14,10 @@ int main(int argc, char **argv)
         ros::console::notifyLoggerLevelsChanged();
     }
 
-    // if (!swarm::SwarmClient::getInstance().start())
-    // {
-    //     return -1;
-    // }
+    if (!Communcation::getInstance().start())
+    {
+        return -1;
+    }
 
     ROS_INFO_STREAM("MCU communcation started...");
 
