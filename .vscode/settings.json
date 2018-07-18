@@ -2,6 +2,11 @@
     "files.associations": {
         "vector": "cpp",
         "*.ipp": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "type_traits": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     }
 }

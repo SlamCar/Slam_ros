@@ -7,6 +7,7 @@
 enum class CommunicateType : uint32_t
 {
     SERIAL = 0,
+    UDP
 };
 
 class Communcation
@@ -18,14 +19,18 @@ public:
         static Communcation instance;
         return instance;
     }
-
-    void dataSend(CommunicateType type);
-
+    
     Communcation();
 
     virtual ~Communcation() {}
 
     bool start();
+
+    void setSendWay(CommunicateType type);
+
+    void dataPack();
+
+    void dataSend();
 
 private:
     
@@ -33,8 +38,9 @@ private:
     
     bool serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
 
-    void serialDataSend();
+    bool udpDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
     
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;
+    CommunicateType sendType_;
 };
