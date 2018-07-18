@@ -1,5 +1,14 @@
 #pragma once
 
+#include "msgs/CmdVel.h"
+
+#include <ros/ros.h>
+
+enum class CommunicateType : uint32_t
+{
+    SERIAL = 0,
+};
+
 class Communcation
 {
 public:
@@ -10,15 +19,21 @@ public:
         return instance;
     }
 
-    SwarmClient();
+    void dataSend(CommunicateType type);
 
-    virtual ~SwarmClient() {}
+    Communcation();
+
+    virtual ~Communcation() {}
 
     bool start();
 
 private:
+    
     void cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel);
     
+    bool serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
+
+    void serialDataSend();
     
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;

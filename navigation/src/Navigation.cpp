@@ -73,11 +73,12 @@ void Navigation::test_switch(bool flag)
 
 void Navigation::test_runner()
 {
+    ROS_DEBUG("-----test_runner-----");
+    msgs::CmdVel TestCmdVel;
 
     while (ros::ok())
     { 
         ros::Rate rate(controllerFrequency_); 
-        msgs::CmdVel TestCmdVel;
         TestCmdVel.driverVelocity = test_driverVelocity_;
         TestCmdVel.steeringAngle = test_steeringAngle_;
         velPub_.publish(TestCmdVel);
