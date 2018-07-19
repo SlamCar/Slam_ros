@@ -48,7 +48,6 @@ void Communcation::cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel)
 
 void Communcation::dataSend()
 {
-    
     ROS_DEBUG("[dataSend]");
 }
 
