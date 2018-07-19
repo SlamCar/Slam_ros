@@ -1,5 +1,6 @@
 # slam_car
-a car to learning slam
+a car to learning slam  
+------详情见Wiki------
 
 ## 运行环境
 `Ubuntu 16.04 ros-kinetic`。
