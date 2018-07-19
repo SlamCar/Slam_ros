@@ -1,6 +1,7 @@
 #pragma once
 
 #include "msgs/CmdVel.h"
+// #include "Serial.hpp"
 
 #include <ros/ros.h>
 
@@ -24,11 +25,11 @@ public:
 
     virtual ~Communcation() {}
 
-    bool start();
+    bool init();
 
     void setSendWay(CommunicateType type);
 
-    void dataPack();
+    bool dataPack();
 
     void dataSend();
 
@@ -38,9 +39,12 @@ private:
     
     bool serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
 
+    void serialDataSend();
+
     bool udpDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
     
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;
     CommunicateType sendType_;
+    // McuSerial McuSerial_;
 };

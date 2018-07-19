@@ -11,7 +11,7 @@ int main(int argc, char **argv)
         ros::console::notifyLoggerLevelsChanged();
     }
 
-    if (!Communcation::getInstance().start())
+    if (!Communcation::getInstance().init())
     {
         return -1;
     }

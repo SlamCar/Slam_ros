@@ -10,9 +10,10 @@ Communcation::Communcation()
                                                      boost::bind(&Communcation::cmdVelCallback, this, _1));
 }
 
-bool Communcation::start()
+bool Communcation::init()
 {
     setSendWay(CommunicateType::SERIAL);
+
     return true;
 }
 
@@ -48,11 +49,34 @@ void Communcation::cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel)
 
 void Communcation::dataSend()
 {
-    
-    ROS_DEBUG("[dataSend]");
+    switch(sendType_)
+    {
+    case CommunicateType::SERIAL:
+    {
+        ROS_DEBUG_STREAM("CommunicateType: Serial mode.");
+        serialDataSend();
+        break;
+    }
+
+    case CommunicateType::UDP:
+    {
+        ROS_DEBUG_STREAM("CommunicateType: Udp stop.");
+        break;
+    }
+    default:
+        break;
+    }
+
 }
 
 bool Communcation::serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel)
 {
 
+}
+
+void Communcation::serialDataSend()
+{
+    // McuSerial_.connect();
+
+    ROS_DEBUG("[serialDataSend]");
 }
