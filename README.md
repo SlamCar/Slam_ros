@@ -79,10 +79,10 @@ $ source ~/catkin_ws/devel/setup.bash
 ## 运行完整程序
 程序已通过roslaunch配置，运行完整程序，请使用roslaunch命令。
 
-`slam_localizer`为程序的主节点，launch文件保存在slam_localizer包下的`launch`目录下。启动时，应该查找slam_localizer package。
+`communcation_mcu`为程序的主节点，launch文件保存在communcation_mcu包下的`launch`目录下。启动时，应该查找communcation_mcu package。
 ```bash
 # Try tab while finding the launch file.
-$ roslaunch slam_localizer cotek_slam.launch
+$ roslaunch communcation_mcu slam_car.launch
 ```
 ## 运行单独节点
 ```bash
