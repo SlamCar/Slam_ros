@@ -26,7 +26,7 @@ a car to learning slam
 $ cd ~/catkin_ws/src
 
 # SERVER should be changed to local sever ip, such as 192.168.0.2.
-$ git clone git@192.168.0.2:slam/LaserNavigation.git src/
+$ git clone https://github.com/NOT-old-wang/Slam_car.git
 
 # 也许你会碰到src非空目录，把src/下的CMakeLists.txt删除即可。
 
