@@ -1,6 +1,6 @@
 #pragma once
 
-// #include <serial/serial.h>
+#include <serial/serial.h>
 #include <ros/ros.h>
 #include <string>
 
@@ -220,4 +220,4 @@ private:
 
     // port id like "/dev/ttyUSB0"
     std::string portId_;
-}
+};

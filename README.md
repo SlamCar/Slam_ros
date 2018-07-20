@@ -21,6 +21,15 @@ a car to learning slam
  └- 
 ```
 
+## 下载
+```bash
+$ cd ~/catkin_ws/src
+
+# SERVER should be changed to local sever ip, such as 192.168.0.2.
+$ git clone git@192.168.0.2:slam/LaserNavigation.git src/
+
+# 也许你会碰到src非空目录，把src/下的CMakeLists.txt删除即可。
+
 ## 依赖
 项目编译前需要先解决依赖问题。
 
@@ -28,6 +37,9 @@ a car to learning slam
 # slam_serial的依赖
 $ sudo apt-get install ros-kinetic-serial
 ```
+
+
+
 
 ## 编译
 该项目基于catkin工作空间，下载前请先建立catkin工作空间。
