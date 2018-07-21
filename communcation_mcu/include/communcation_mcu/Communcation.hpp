@@ -2,7 +2,7 @@
 
 #include "msgs/CmdVel.h"
 // #include "Serial.hpp"
-
+#include "Protocal.h"
 #include <ros/ros.h>
 
 enum class CommunicateType : uint32_t
@@ -46,5 +46,6 @@ private:
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;
     CommunicateType sendType_;
+    SerialProtocal pack_;
     // McuSerial McuSerial_;
 };

@@ -15,6 +15,7 @@ typedef struct SerialProtocal_
 
 typedef struct TaskRequest_
 {
+   // uint32_t 
     float driverVelocity;
     float steeringAngle;
 } TaskRequest_;
