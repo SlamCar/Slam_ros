@@ -72,8 +72,8 @@ void Communcation::dataSend()
 
 bool Communcation::serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel)
 {
-    pack_.wCmd = 0x1111;
-    pack_.wLen = 0x0011;
+    // pack_.wCmd = 0x1111;
+    // pack_.wLen = 0x0011;
     //pack.byData = 
 
 }

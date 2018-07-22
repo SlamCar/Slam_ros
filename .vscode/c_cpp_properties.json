@@ -1,0 +1,50 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/usr/include",
+                    "/usr/include/x86_64-linux-gnu",
+                    "/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed",
+                    "/usr/local/include",
+                    "/usr/lib/gcc/x86_64-linux-gnu/5/include",
+                    "/usr/include/c++/5/backward",
+                    "/usr/include/x86_64-linux-gnu/c++/5",
+                    "/usr/include/c++/5",
+                    "/usr/include/eigen3",
+                    "/opt/ros/kinetic/include",
+                    "${workspaceRoot}/localizer/include/localizer",
+                     "${workspaceRoot}/navigation/include/navigation",
+                     "${workspaceRoot}/communcation_mcu/include/communcation_mcu",
+                    "${workspaceRoot}/tourguide/include/tourguide",
+                    "${workspaceRoot}/../devel/include"
+                ]
+            },
+            "includePath": [
+                "/usr/include",
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed",
+                "/usr/local/include",
+                "/usr/lib/gcc/x86_64-linux-gnu/5/include",
+                "/usr/include/c++/5/backward",
+                "/usr/include/x86_64-linux-gnu/c++/5",
+                "/usr/include/c++/5",
+                "/usr/include/eigen3",
+                "/opt/ros/kinetic/include",
+                "${workspaceRoot}/localizer/include/localizer",
+                "${workspaceRoot}/navigation/include/navigation",
+                "${workspaceRoot}/communcation_mcu/include/communcation_mcu",
+                "${workspaceRoot}/tourguide/include/tourguide",
+                "${workspaceRoot}/../devel/include"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

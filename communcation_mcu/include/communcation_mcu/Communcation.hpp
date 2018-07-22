@@ -46,6 +46,6 @@ private:
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;
     CommunicateType sendType_;
-    SerialProtocal pack_;
+    // SerialProtocal pack_;
     // McuSerial McuSerial_;
 };
