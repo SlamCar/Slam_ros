@@ -62,7 +62,8 @@ public:
             }
 
             pclose(fp);
-            boost::algorithm::trim((portId_ = std::string(line)));
+            portId_ = std::string(line);
+            // boost::algorithm::trim((portId_ = std::string(line)));
             ROS_INFO_STREAM("Find usb device: " << portId_);
             ROS_INFO_STREAM("Connecting to serail port...");
         }
