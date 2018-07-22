@@ -1,7 +1,7 @@
 #pragma once
 
 #include "msgs/CmdVel.h"
-// #include "Serial.hpp"
+#include "Serial.hpp"
 
 #include <ros/ros.h>
 
