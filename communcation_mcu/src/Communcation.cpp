@@ -18,11 +18,6 @@ bool Communcation::init()
     return true;
 }
 
-void Communcation::setSendWay(CommunicateType type)
-{
-    sendType_ = type;
-}
-
 void Communcation::cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel)
 {
     dataSend(cmdVel);
@@ -63,5 +58,7 @@ void Communcation::serialDataSend(const msgs::CmdVel::ConstPtr &cmdVel)
     pack.generateCrc();
 
     ser_.write(reinterpret_cast<uint8_t *>(&pack), sizeof(pack));
+
+    std::memset(reinterpret_cast<uint8_t *>(&pack), 0, sizeof(pack));
     ROS_DEBUG("[serialDataSend]");
 }
