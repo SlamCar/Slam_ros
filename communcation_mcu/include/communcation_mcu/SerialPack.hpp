@@ -3,7 +3,56 @@
 #include "Serial.hpp"
 #include "Protocal.h"
 
-class SerialPack
+/**
+ * \class ProtocalPack
+ * \brief base protocal for socket communication
+ */
+class ProtocalPack
+{
+  public:
+    /**
+     * \brief return underlayer raw data
+     */
+    virtual uint8_t *data() = 0;
+
+    /**
+     * brief return data size
+     */
+    virtual std::size_t size() = 0;
+
+    /**
+     * \biref It's CRC16-Modbus checking.
+     *
+     * \param  ucBuffer [Input buffer.]
+     * \param  uiBufLen [Input bufferAL_HPP_ length.]
+     * \return          [crc result]
+     */
+    uint16_t crcVerify(const uint8_t *buf, std::size_t size)
+    {
+        uint16_t wCrc = 0xFFFF;
+        uint16_t wPolynom = 0xA001;
+
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            wCrc ^= buf[i];
+            for (uint32_t j = 0; j < 8; ++j)
+            {
+                if (wCrc & 0x0001)
+                {
+                    wCrc = (wCrc >> 1) ^ wPolynom;
+                }
+                else
+                {
+                    wCrc = wCrc >> 1;
+                }
+            }
+        }
+
+        return wCrc;
+    }
+};
+
+class SerialPack : public ProtocalPack
 {
 public:
     /**
@@ -66,6 +115,11 @@ public:
      * \return raw data
      */
     inline uint8_t *data() { return reinterpret_cast<uint8_t *>(&msg_); }
+
+        /**
+     * brief return data size
+     */
+    inline std::size_t size() {}
 
     inline uint8_t *body() { return msg_.byData; }
 

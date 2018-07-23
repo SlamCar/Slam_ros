@@ -2,6 +2,7 @@
 
 #include "msgs/CmdVel.h"
 #include "Serial.hpp"
+#include "SerialPack.hpp"
 
 #include <ros/ros.h>
 
@@ -37,15 +38,13 @@ private:
     
     void cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel);
     
-    bool serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
+    void serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
 
     void serialDataSend();
 
-    bool udpDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
+    void udpDataPack(const msgs::CmdVel::ConstPtr &cmdVel);
     
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;
     CommunicateType sendType_;
-    // SerialProtocal pack_;
-    // McuSerial McuSerial_;
 };

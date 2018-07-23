@@ -1,5 +1,5 @@
 #include "Communcation.hpp"
-
+#include "SerialPack.hpp"
 
 Communcation::Communcation()
 {
@@ -14,7 +14,6 @@ Communcation::Communcation()
 bool Communcation::init()
 {
     setSendWay(CommunicateType::SERIAL);
-
     return true;
 }
 
@@ -70,17 +69,20 @@ void Communcation::dataSend()
 
 }
 
-bool Communcation::serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel)
+void Communcation::serialDataPack(const msgs::CmdVel::ConstPtr &cmdVel)
 {
-    // pack_.wCmd = 0x1111;
-    // pack_.wLen = 0x0011;
-    //pack.byData = 
+    TaskRequest task;
+    task.driverVelocity = cmdVel->driverVelocity;
+    task.steeringAngle = cmdVel->steeringAngle;
 
+    SerialPack pack(CmdType::TASK_REQ);
+    pack.setLen(20);
+    pack.setBody(reinterpret_cast<uint8_t *>(&task), pack.len());
+    pack.generateCrc();
 }
 
 void Communcation::serialDataSend()
 {
     // McuSerial_.connect();
-
     ROS_DEBUG("[serialDataSend]");
 }
