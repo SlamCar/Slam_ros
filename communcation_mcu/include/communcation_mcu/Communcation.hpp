@@ -14,7 +14,7 @@ enum class CommunicateType : uint32_t
 
 class Communcation
 {
-public:
+  public:
 
     static Communcation &getInstance()
     {
@@ -34,7 +34,7 @@ public:
 
     void dataSend(const msgs::CmdVel::ConstPtr &cmdVel);
 
-private:
+  private:
     
     void cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel);
 
