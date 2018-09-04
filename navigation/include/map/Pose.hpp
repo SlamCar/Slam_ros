@@ -43,13 +43,13 @@ class Pose
         point_.setY(y);
         yaw_ = yaw;
     }
-    inline setPoint(Point p) { point_ = p; }
+    inline setPoint(Point p)  { point_ = p; }
     inline setYaw(doubel yaw) { yaw_ = yaw; }
 
     inline const Point point(void) { return point_; }
-    inline const double x(void) { return point_.x(); }
-    inline const double y(void) { return point_.y(); }
-    inline const double yaw(void) { return yaw_; }
+    inline const double x(void)    { return point_.x(); }
+    inline const double y(void)    { return point_.y(); }
+    inline const double yaw(void)  { return yaw_; }
 
     inline double getDistance(const Pose pose) const
     {
