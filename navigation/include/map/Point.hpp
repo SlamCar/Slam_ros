@@ -49,4 +49,4 @@ class Point
     double x_;
     double y_;
 
-}
+};

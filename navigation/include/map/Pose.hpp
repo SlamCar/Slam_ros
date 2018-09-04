@@ -59,4 +59,4 @@ class Pose
   private:
     Point point_;
     double yaw_;
-}
+};
