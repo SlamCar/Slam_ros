@@ -1,8 +1,13 @@
 # slam_car
-a car to learning slam  
-------详情见Wiki------
+**a car for learn slam**
 
+>一盏灯， 一片昏黄； 一简书， 一杯淡茶。 守着那一份淡定， 品读属于自己的寂寞。 保持淡定， 才能欣赏到最美丽的风景！ 保持淡定， 人生从此不再寂寞。
+
+**[ 详情见Wiki ]**
+
+ 
 ## 运行环境
+
 `Ubuntu 16.04 ros-kinetic`。
 
 ## 项目结构
@@ -29,6 +34,7 @@ $ git clone https://github.com/NOT-old-wang/Slam_car.git
 
 # 依赖
 * 项目编译前需要先解决依赖问题。
+
 ```
 # slam_serial的依赖：
 $ sudo apt-get install ros-kinetic-serial
@@ -62,6 +68,7 @@ $ source ~/catkin_ws/devel/setup.bash
 程序已通过roslaunch配置，运行完整程序，请使用roslaunch命令。
 
 `communcation_mcu`为程序的主节点，`launch`文件保存在`communcation_mcu`包下的`launch`目录下；
+
 ```
 # Try tab while finding the launch file.
 $ roslaunch communcation_mcu slam_car.launch
