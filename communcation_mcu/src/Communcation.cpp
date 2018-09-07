@@ -13,7 +13,7 @@ Communcation::Communcation()
 
 bool Communcation::init()
 {
-    setSendWay(CommunicateType::SERIAL);
+    //setSendWay(CommunicateType::SERIAL);
     ser_.connect();
     return true;
 }

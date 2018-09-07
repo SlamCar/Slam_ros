@@ -1,6 +1,7 @@
 #pragma once
 
 #include "msgs/CmdVel.h"
+#include "PidControl.hpp"
 
 #include <ros/ros.h>
 #include <boost/shared_ptr.hpp>
@@ -71,4 +72,6 @@ class Navigation
     double controllerFrequency_;
     std::string mapPackageName_;
     std::string mapFileName_;
+
+    PidController pidController_;
 };

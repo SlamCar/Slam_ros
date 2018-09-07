@@ -1,6 +1,5 @@
 #include "Navigation.hpp"
 
-
 Navigation::Navigation()
 {
     ros::NodeHandle nh;
@@ -11,6 +10,7 @@ Navigation::Navigation()
     private_nh.param("test_steeringAngle_", test_steeringAngle_, 0.0);
     
     velPub_ = nh.advertise<msgs::CmdVel>("cmd_vel", 10);
+
 
     // tm_ = boost::make_shared<TaskManager>();
     // sm_ = boost::make_shared<StateManager>(tm_);
@@ -39,6 +39,7 @@ void Navigation::run()
 
 void Navigation::runner()
 {
+
     while (ros::ok())
     {
         ros::Rate rate(controllerFrequency_);
@@ -56,6 +57,13 @@ void Navigation::runner()
         // sleep to make sure the control frequency
         rate.sleep();
     }
+    /*TODO
+    ros::Timer controlling = n.createTimer(ros::Duration(1.0), callback, false);
+    void callback(const ros::TimerEvent&)
+    {
+        ROS_INFO("Callback  triggered");
+    }
+    */
 }
 
 void Navigation::test_switch(bool flag)
@@ -73,8 +81,8 @@ void Navigation::test_switch(bool flag)
 
 void Navigation::test_runner()
 {
-    ROS_DEBUG("-----test_runner-----");
-    msgs::CmdVel TestCmdVel;
+    ROS_DEBUG("[-----test_runner-----]");
+    msgs::CmdVel TestCmdVel;   
 
     while (ros::ok())
     { 

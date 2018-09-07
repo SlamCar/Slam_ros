@@ -1,4 +1,4 @@
-#include "MiniPID.hpp"
+#include "Pid.hpp"
 
 MiniPID::MiniPID(double p, double i, double d)
 {

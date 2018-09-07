@@ -28,7 +28,7 @@ class Communcation
 
     bool init();
 
-    void setSendWay(CommunicateType type);
+    //void setSendWay(CommunicateType type);
 
     bool dataPack();
 
@@ -41,7 +41,7 @@ class Communcation
     void serialDataSend(const msgs::CmdVel::ConstPtr &cmdVel);
 
     void udpDataSend(const msgs::CmdVel::ConstPtr &cmdVel);
-    inline void setSendWay(CommunicateType type) {sendType_ = type;}
+   // inline void setSendWay(CommunicateType type) {sendType_ = type;}
     
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedbackPub_;
