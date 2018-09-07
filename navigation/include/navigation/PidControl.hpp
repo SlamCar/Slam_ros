@@ -12,7 +12,7 @@ class PidController
   public:
     PidController();
     void friend paramCallback(navigation::navigationConfig &config, uint32_t level);
-    
+    bool dynamicAdjust();
   private:
     double p_;
     double i_;

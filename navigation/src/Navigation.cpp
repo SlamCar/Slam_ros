@@ -39,6 +39,7 @@ void Navigation::run()
 
 void Navigation::runner()
 {
+    // pidController_.dynamicAdjust();
 
     while (ros::ok())
     {
@@ -53,10 +54,11 @@ void Navigation::runner()
             ROS_WARN("Control loop missed its desired rate of %.2fHz... the heartbeat actually took %.2f seconds",
                      controllerFrequency_, rate.cycleTime().toSec());
         }
-
+        
         // sleep to make sure the control frequency
         rate.sleep();
     }
+
     /*TODO
     ros::Timer controlling = n.createTimer(ros::Duration(1.0), callback, false);
     void callback(const ros::TimerEvent&)
