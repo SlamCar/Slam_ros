@@ -18,4 +18,5 @@ class PidController
     double i_;
     double d_;
     MiniPID pid_;
+    //boost::shared_ptr<boost::thread> adjust_;
 };

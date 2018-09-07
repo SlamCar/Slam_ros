@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     {
         ros::console::notifyLoggerLevelsChanged();
     }
-
+    
     Navigation navigation;
 
     if (navigation.init())

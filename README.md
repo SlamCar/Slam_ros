@@ -11,7 +11,7 @@
 ## 项目结构
 ```
 --- src
- |- .gitlab
+ |- .gitlab 
  |- .vscode
  |- localizer
  |- communcation_mcu

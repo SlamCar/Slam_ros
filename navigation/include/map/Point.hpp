@@ -9,7 +9,7 @@ class Point
 {
   public:
     
-    Point() : x_(0.0), y(0.0) {}
+    Point() : x_(0.0), y_(0.0) {}
     Point(double x, double y) : x_(x), y_(y) {}
     Point(const Point &p) : x_(p.x_), y_(p.y_) {}
     
