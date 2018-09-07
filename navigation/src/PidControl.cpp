@@ -3,7 +3,7 @@
 
 void paramCallback(navigation::navigationConfig &config, uint32_t level)
 {
-    ROS_ERROR("[paramCallback]");
+    ROS_DEBUG("[ P: %f  I: %f  D: %f ]",config.P, config.I, config.D);
 }
 
 PidController::PidController() : pid_(0.0, 0.0, 0.0)

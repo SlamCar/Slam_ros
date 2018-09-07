@@ -1,6 +1,5 @@
 <launch>
-
-        <!-- <env name="ROSCONSOLE_CONFIG_FILE" value="$(find cotek_localizer)/config/cotek_rosconsole.conf"/> -->
+    <!-- <env name="ROSCONSOLE_CONFIG_FILE" value="$(find cotek_localizer)/config/cotek_rosconsole.conf"/> -->
 
     <!-- Run laser node. -->
     <!-- <node pkg="cotek_urg" type="cotek_urg_node" name="cotek_urg_node" respawn="true"/> -->
@@ -13,12 +12,12 @@
 
     <!-- Run navigation node. -->
     <node pkg="navigation" type="navigation_node" name="navigation_node" respawn="true" output="screen">
-        <!-- <rosparam command="load" file="$(find cotek_navigation)/config/cotek_navigation_params.yaml" /> -->
+        <rosparam command="load" file="$(find navigation)/config/navigation_params.yaml" />
     </node>
 
     <!-- Run communcation_mcu node. -->
-    <node pkg="communcation_mcu" type="communcation_mcu_node" name="communcation_mcu_node" respawn="true" output="screen">
-    </node>
+    <!-- <node pkg="communcation_mcu" type="communcation_mcu_node" name="communcation_mcu_node" respawn="true" output="screen">
+    </node> -->
 
     
 </launch>

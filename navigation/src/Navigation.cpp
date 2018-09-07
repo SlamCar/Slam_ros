@@ -26,7 +26,6 @@ bool Navigation::init()
 void Navigation::run()
 {
     // planner_ = boost::make_shared<Planner>();
-
     if(test_flag_)
     {
         test_ = boost::make_shared<boost::thread>(boost::bind(&Navigation::test_runner, this));
@@ -80,15 +79,19 @@ void Navigation::test_switch(bool flag)
     }
 }
 
-
 void Navigation::test_runner()
 {
-    ROS_DEBUG("[-----test_runner-----]");
-    msgs::CmdVel TestCmdVel;   
+    ROS_INFO("[-----test_runner-----]");
+    //pidController_.dynamicAdjust();
+    PidController pidController_;
+    pidController_.dynamicAdjust();
 
+    msgs::CmdVel TestCmdVel; 
+      
     while (ros::ok())
     { 
-        ros::Rate rate(controllerFrequency_); 
+        ros::Rate rate(controllerFrequency_);
+
         TestCmdVel.driverVelocity = test_driverVelocity_;
         TestCmdVel.steeringAngle = test_steeringAngle_;
         velPub_.publish(TestCmdVel);
@@ -98,5 +101,6 @@ void Navigation::test_runner()
             ROS_WARN("Control loop missed its desired rate of %.2fHz... the heartbeat actually took %.2f seconds",
                      controllerFrequency_, rate.cycleTime().toSec());
         }
+        rate.sleep();
     }
 }
