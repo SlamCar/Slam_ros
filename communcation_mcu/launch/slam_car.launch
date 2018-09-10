@@ -1,5 +1,6 @@
 <launch>
-    <!-- <env name="ROSCONSOLE_CONFIG_FILE" value="$(find cotek_localizer)/config/cotek_rosconsole.conf"/> -->
+     <!-- set logs -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find communcation_mcu)/config/log.conf"/> 
 
     <!-- Run laser node. -->
     <!-- <node pkg="cotek_urg" type="cotek_urg_node" name="cotek_urg_node" respawn="true"/> -->

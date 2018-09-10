@@ -1,15 +1,9 @@
 #include "Point.hpp"
+
 #include <ros/ros.h>
 #include <gtest/gtest.h>
+#include <cmath>
 
-// Run all the tests that were declared with TEST()
-int main(int argc, char **argv)
-{
-    testing::InitGoogleTest(&argc, argv);
-    ros::init(argc, argv, "tester");
-    ros::NodeHandle nh;
-    return RUN_ALL_TESTS();
-}
 
 TEST(Point, basics)
 {
@@ -44,8 +38,14 @@ TEST(Point, basics)
     }   
 
     {
+        Point p1(1.0, 1.0);
+        Point p2(1.0, 1.0);
+        EXPECT_TRUE( p1 == p2 );
+    }
+
+    {
         Point p1(0.0, 0.0);
         Point p2(1.0, 1.0);
-        EXPECT_DOUBLE_EQ(1.413999999999, p1.getDistance(p2));
+        EXPECT_DOUBLE_EQ(sqrt(2), p1.getDistance(p2));
     }
 }

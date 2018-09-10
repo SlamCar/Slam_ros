@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     Navigation navigation;
 
     if (navigation.init())
-    {
+    {   
         navigation.run();
         ros::spin();
     }

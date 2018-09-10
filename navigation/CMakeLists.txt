@@ -198,7 +198,9 @@ target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${PROJECT_NAME})
 
 ## Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test 
+  test/test_main.cpp
   test/test_point.cpp
+  test/test_pose.cpp
 )
 
 if(TARGET ${PROJECT_NAME}-test)

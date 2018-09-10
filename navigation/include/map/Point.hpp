@@ -26,11 +26,11 @@ class Point
 
     bool operator == (const Point &p)
     {
-        //this->x_ == p.x_ && this->y_ == p.y_ ? true : false;
-        if(this->x_ == p.x_ && this->y_ == p.y_)
-            return true;
-        else 
-            return false;
+        return this->x_ == p.x_ && this->y_ == p.y_ ? true : false;
+        // if(this->x_ == p.x_ && this->y_ == p.y_)
+        //     return true;
+        // else 
+        //     return false;
     }
 
     inline void setX(double x) { x_ = x; }

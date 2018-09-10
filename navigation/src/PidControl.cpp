@@ -1,19 +1,16 @@
 #include "PidControl.hpp"
 
 
-void paramCallback(navigation::navigationConfig &config, uint32_t level)
-{
-    ROS_DEBUG("[ P: %f  I: %f  D: %f ]",config.P, config.I, config.D);
-}
-
 PidController::PidController() : pid_(0.0, 0.0, 0.0)
 {
-    // ros::NodeHandle nh;
-    // ros::NodeHandle private_nh("~"); 
+    ros::NodeHandle nh;
+    ros::NodeHandle private_nh("~");
 
-    // private_nh.param("P", p_, 3.075);
-    // private_nh.param("I", i_, 0.05);
-    // private_nh.param("D", d_, 0.6);
+    private_nh.param("P", p_, 3.075);
+    private_nh.param("I", i_, 0.05);
+    private_nh.param("D", d_, 0.6);
+
+    pid_.setPID(p_, i_, d_);
 }
 
 bool PidController::dynamicAdjust()
@@ -22,14 +19,14 @@ bool PidController::dynamicAdjust()
     /**
      * 作用域在此函数内
      */
-    dynamic_reconfigure::Server<navigation::navigationConfig> server;                     
-    dynamic_reconfigure::Server<navigation::navigationConfig>::CallbackType f;
-    f = boost::bind(&paramCallback, _1, _2);
-    server.setCallback(f);
-    while(ros::ok())
-    {
+    // dynamic_reconfigure::Server<navigation::navigationConfig> server;                     
+    // dynamic_reconfigure::Server<navigation::navigationConfig>::CallbackType f;
+    // f = boost::bind(&paramCallback, _1, _2);
+    // server.setCallback(f);
+    // while(ros::ok())
+    // {
        
-    }
+    // }
 
-    return true;
+    // return true;
 }
