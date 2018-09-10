@@ -10,7 +10,7 @@
 
 
 /**
- * class Navigation: start an action server and calculate cmd_vel
+ * class Navigation: use to calculate cmd_vel
  */
 class Navigation
 {

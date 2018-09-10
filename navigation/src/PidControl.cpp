@@ -1,6 +1,5 @@
 #include "PidControl.hpp"
 
-
 void paramCallback(navigation::navigationConfig &config, uint32_t level)
 {
     ROS_DEBUG("[ P: %f  I: %f  D: %f ]",config.P, config.I, config.D);
