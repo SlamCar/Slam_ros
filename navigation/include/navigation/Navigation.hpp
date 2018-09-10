@@ -73,5 +73,5 @@ class Navigation
     std::string mapPackageName_;
     std::string mapFileName_;
 
-    PidController pidController_;
+    //PidController pidController_;
 };
