@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
   std_msgs
+  geometry_msgs
+  nav_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -131,6 +133,7 @@ add_library(${PROJECT_NAME}
   src/Navigation.cpp
   src/Pid.cpp
   src/PidControl.cpp
+  src/StateCollector.cpp
 )
 
 ## Add cmake target dependencies of the library

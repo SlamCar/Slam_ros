@@ -4,7 +4,7 @@
 #include "Point.hpp"
 
 /**
- * \class Pose
+ * \class Pose   ~~~~ geometry_msgs::Pose2D
  */
 class Pose
 {
