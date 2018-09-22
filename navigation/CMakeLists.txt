@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
   std_msgs
+  geometry_msgs
+  nav_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -108,6 +110,7 @@ catkin_package(
  INCLUDE_DIRS include
  LIBRARIES navigation
  CATKIN_DEPENDS roscpp rospy std_msgs
+#  CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
 
@@ -119,15 +122,18 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include/navigation
+  include/map
   ${CATKIN_DEVEL_PREFIX}/include
   ${catkin_INCLUDE_DIRS}
 )
+
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/Navigation.cpp
   src/Pid.cpp
   src/PidControl.cpp
+  src/StateCollector.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -194,10 +200,15 @@ target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${PROJECT_NAME})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_navigation.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+catkin_add_gtest(${PROJECT_NAME}-test 
+  test/test_main.cpp
+  test/test_point.cpp
+  test/test_pose.cpp
+)
+
+if(TARGET ${PROJECT_NAME}-test)
+  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
+endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

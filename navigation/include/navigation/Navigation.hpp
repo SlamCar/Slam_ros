@@ -8,9 +8,15 @@
 #include <boost/thread.hpp>
 #include <string>
 
+void paramCallback(navigation::navigationConfig &config, uint32_t level)
+{
+    ROS_DEBUG("[ P: %f  I: %f  D: %f ]",config.P, config.I, config.D);  
+    //pidController_.setP(config.P);
+}
+
 
 /**
- * class Navigation: start an action server and calculate cmd_vel
+ * class Navigation: use to calculate cmd_vel
  */
 class Navigation
 {
@@ -73,5 +79,5 @@ class Navigation
     std::string mapPackageName_;
     std::string mapFileName_;
 
-    //PidController pidController_;
+    PidController pidController_;
 };

@@ -1,5 +1,7 @@
 # Parameters for navigation node.
 
-p : 1
-i : 2
-d : 3
+P : 1
+I : 2
+D : 3
+
+speed : 0.1

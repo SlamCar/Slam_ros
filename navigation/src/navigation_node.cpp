@@ -12,10 +12,15 @@ int main(int argc, char** argv)
         ros::console::notifyLoggerLevelsChanged();
     }
 
+    dynamic_reconfigure::Server<navigation::navigationConfig> server;                     
+    dynamic_reconfigure::Server<navigation::navigationConfig>::CallbackType f;
+    f = boost::bind(&paramCallback, _1, _2);
+    server.setCallback(f);
+    
     Navigation navigation;
 
     if (navigation.init())
-    {
+    {   
         navigation.run();
         ros::spin();
     }
