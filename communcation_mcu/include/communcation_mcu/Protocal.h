@@ -1,71 +1,112 @@
 #ifndef PROTOCAL_H_
 #define PROTOCAL_H_
 #include <stdint.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define HEADER_BYTESIZE             16
-#define BODY_MAX_BYTESIZE           1024
-#define CRC_BYTESIZE                2
+#define HEADER_BYTESIZE             6
+#define BODY_MAX_BYTESIZE           52
+#define CRC_BYTESIZE                1
 
+#define MODULEID                    0x039Cu
 
-enum CmdType
-{
-    /**
-     * Server -> AGV
-     */
-    CMD_GET_VERSION     = 0x3030u,
-    CMD_GET_RTC_TIME    = 0x3130u,
-    CMD_GET_DIAGNOSE    = 0x3230u,
-    CMD_GET_CONFIG      = 0x3330u,
-    CMD_GET_USER_REAL   = 0x3430u,
-    CMD_READ_MEM        = 0x3530u,
-    CMD_SET_TIME        = 0x3140u,
-    CMD_SET_CONFIG      = 0x3340u,
-    CMD_WRITE_MEM       = 0x3540u,
-    CMD_COM_CAN1TXD     = 0x3050u,
-    CMD_COM_CAN2TXD     = 0x3150u,
-    CMD_UPDATE_PREPARE  = 0x3060u,
-    CMD_UPDATE_DOWN     = 0x3160u,
-    CMD_UPDATE_UPCHECK  = 0x3260u,
-    CMD_UPDATE_REFLASH  = 0x3360u,
-    CMD_RESET           = 0x3070u,
-
-    /**
-     * Service protocal
-     */
-    HEART_REQ           = 0x0002,
-    HEART_RSP           = 0XF002,
-    ENTER_BUNDLE_REQ    = 0x0003,
-    ENTER_BUNDLE_RSP    = 0xF003,
-    TASK_FINISH_REQ     = 0x0004,
-    TASK_FINISH_RSP     = 0xF004,
-    TASK_REQ            = 0x200A,
-    TASK_RSP            = 0xF00A,
-    REMOTE_CONTROL_REQ  = 0x200B,
-    REMOTE_CONTROL_RSP  = 0xF00B,
-
-    /**
-     * IPC releated
-     */
-    IPC_REQ             = 0x0005,
-    IPC_RSP             = 0xF005,
+enum RECEIVE_STATE{
+    STATE_RECV_NONE = 0,
+    STATE_RECV_HEARD,
+    STATE_RECV_ID_H,
+    STATE_RECV_ID_L,
+    STATE_RECV_LEN,
+    STATE_RECV_DATA,
+    STATE_RECV_CHECK
 };
 
-typedef struct SerialProtocal_
+enum CmdId
 {
-    uint16_t wCmd;                                    // command code
-    uint16_t wLen;                                    // current pask's data length, 1024 max
-    uint8_t byData[BODY_MAX_BYTESIZE + CRC_BYTESIZE]; // data content, max size is 1024, append crc16
-} SerialProtocal;
+    /**
+     * TEST
+     */
+    DEBUG_TEST_COMMOND    = 0x0001u,
+    /**
+     * QT -> STM32
+     */
+    DEBUG_QT_COMMOND      = 0xA010u,
+    /**
+     * IPC -> STM32
+     */
+    CMD_GET_VERSION       = 0x1010u,
+    CMD_IPC_COMMOND       = 0x2010u,
+    CMD_RESET             = 0x2020u,
+    /**
+     * STM32 -> IPC || QT
+     */
+    STM32_FEED_BACK       = 0X5010,
+    STM32_HEART_BEAT      = 0x6010,
+    STM32_TASK_FINISH     = 0x7010,
+};
 
-typedef struct TaskRequest_
+typedef struct DataHead_
+{
+    uint16_t moduleId;
+    uint16_t dataId;
+    uint8_t  dataLen;
+    uint8_t  recv_len;
+} Head;
+
+typedef struct SerialPackage_
+{
+    Head head_;      // fixed for MODULEID  9.24  birthday
+    uint8_t byData_[BODY_MAX_BYTESIZE]; // data content, max size is 1024, append crc16
+    uint8_t check_;
+   
+    SerialPackage_(){}
+    SerialPackage_(uint16_t cmd_id, uint8_t* data = 0,uint16_t len = 0)
+    {
+        head_.moduleId = MODULEID;
+        head_.dataId = cmd_id;
+        head_.dataLen = len;
+        head_.recv_len = 0;
+
+        check_ = 0;
+        
+        if(data != 0 && len != 0)
+            memcpy(byData_, data, len);
+        
+        uint8_t*  _send_buffer = (uint8_t*)this;
+
+        unsigned int i = 0;
+        for(i = 0; i < sizeof(head_)+head_.dataLen; i++)
+            check_ += _send_buffer[i];
+        
+        _send_buffer[sizeof(head_)+head_.dataLen] = check_;
+    }
+
+} SerialPackage;
+
+
+typedef struct IpcCommand_
 {
     float driverVelocity;
     float steeringAngle;
-} TaskRequest;
+} IpcCommand;
+
+class Notify
+{
+    public:
+        virtual void update(const CmdId id, void* data) = 0;
+};
+
+class Protocalframe
+{
+    public:
+        virtual bool init()=0;
+        virtual void register_notify(const CmdId id, Notify* _nf)=0;
+        virtual bool data_recv(unsigned char c)=0;       // receive data
+        virtual bool data_parse()=0;                     // 
+        virtual bool interact(const CmdId id)=0;
+};
 
 #ifdef __cplusplus
 }

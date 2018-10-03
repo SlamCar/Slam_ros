@@ -9,6 +9,18 @@ typedef union{
     float fvalue;
 }float_union;
 
+
+class TransPort
+{
+  public:
+    virtual bool connect() = 0;
+    
+    virtual bool state() = 0;
+    
+    virtual size_t read(uint8_t *buff, size_t size) = 0;
+    virtual void write(const uint8_t *buff, size_t size) = 0;
+};
+
 class McuSerial
 {
 public:

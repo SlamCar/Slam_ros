@@ -73,6 +73,7 @@ class Navigation
     bool test_flag_;
     double test_driverVelocity_;
     double test_steeringAngle_;
+  
     boost::shared_ptr<boost::thread> test_;
 
     double controllerFrequency_;

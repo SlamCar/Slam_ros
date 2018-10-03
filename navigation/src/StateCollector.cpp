@@ -13,5 +13,6 @@ StateCollector::StateCollector()
 
 void StateCollector::feedbackCallback(const msgs::Feedback::ConstPtr &feedback)
 {
+    state_ = WorkState::NORMOL;
     
 }

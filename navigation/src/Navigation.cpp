@@ -83,18 +83,18 @@ void Navigation::test_runner()
 {
     ROS_INFO("[-----test_runner-----]");
     
-    dynamic_reconfigure::Server<navigation::navigationConfig> server;                     
-    dynamic_reconfigure::Server<navigation::navigationConfig>::CallbackType dynamic_test;
-    dynamic_test = boost::bind(&paramCallback, _1, _2);
-    server.setCallback(dynamic_test);
+    // dynamic_reconfigure::Server<navigation::navigationConfig> server;                     
+    // dynamic_reconfigure::Server<navigation::navigationConfig>::CallbackType dynamic_test;
+    // dynamic_test = boost::bind(&paramCallback, _1, _2);
+    // server.setCallback(dynamic_test);
       
     while (ros::ok())
     { 
         ros::Rate rate(controllerFrequency_);
-
-        // TestCmdVel.driverVelocity = test_driverVelocity_;
-        // TestCmdVel.steeringAngle = test_steeringAngle_;
-        // velPub_.publish(TestCmdVel);
+        msgs::CmdVel TESTcmd;
+        TESTcmd.driverVelocity = test_driverVelocity_;
+        TESTcmd.steeringAngle = test_steeringAngle_;
+        velPub_.publish(TESTcmd);
 
         if (rate.cycleTime() > ros::Duration(1.0 / controllerFrequency_))
         {

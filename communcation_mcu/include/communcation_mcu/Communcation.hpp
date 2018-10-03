@@ -1,10 +1,20 @@
 #pragma once
 
-#include "msgs/CmdVel.h"
-#include "Serial.hpp"
-#include "SerialPack.hpp"
-
+#include <boost/shared_ptr.hpp>
+#include <boost/assign/list_of.hpp>
+#include <string>
+#include <vector>
 #include <ros/ros.h>
+
+#include "msgs/CmdVel.h"
+#include "msgs/FeedBack.h"
+#include "UART_Interface.hpp"
+#include "SerialPack.hpp"
+#include "SerialTransport.hpp"
+#include "Transport.hpp"
+#include "DataBase.hpp"
+#include "IPC_Protocalframe.hpp"
+
 
 enum class CommunicateType : uint32_t
 {
@@ -21,30 +31,52 @@ class Communcation
         static Communcation instance;
         return instance;
     }
-    
-    Communcation();
 
     virtual ~Communcation() {}
 
     bool init();
 
-    //void setSendWay(CommunicateType type);
+    void updating();
 
-    bool dataPack();
-
-    void dataSend(const msgs::CmdVel::ConstPtr &cmdVel);
 
   private:
+
+    Communcation();
+    bool serialInit();
+    bool udpInit();
     
+    bool ConnectState_;
+    double CommuncateFrequency_;
+    CommunicateType Type_;                      //Communcate of the car
+    McuSerial Serial_;
+
+    ros::Subscriber cmdVelSub_;
+    ros::Publisher feedBackPub_;                 
+    ros::Publisher carParamPub_;                // some Param of the car
+
+    msgs::FeedBack feedBackMsg_;
+ 
+    boost::shared_ptr<Transport> trans_;        // class for serial or udp
+    boost::shared_ptr<Protocalframe> frame_;    // class for protocal_package
+    
+    inline void setCommunicateType(CommunicateType type) {Type_ = type;}
+    
+    /**
+     * save data : external --> database  
+     **/
     void cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel);
 
-    void serialDataSend(const msgs::CmdVel::ConstPtr &cmdVel);
+    /**
+     * update data :  database --> external
+     **/
+    void updateCmd();
+    void updateFeeback(); //board --> database --> pub
 
-    void udpDataSend(const msgs::CmdVel::ConstPtr &cmdVel);
-   // inline void setSendWay(CommunicateType type) {sendType_ = type;}
+    /**
+     * data check
+     **/
+    bool dataRight(SerialPackage msg,uint8_t checksum);
     
-    ros::Subscriber cmdVelSub_;
-    ros::Publisher feedbackPub_;
-    CommunicateType sendType_;
-    McuSerial ser_;
+    
+
 };

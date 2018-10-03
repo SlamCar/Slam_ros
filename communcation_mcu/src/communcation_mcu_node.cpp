@@ -4,7 +4,7 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "communcation_mcu_node");
-
+    
     // Set ros log level:
     if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
     {
@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 
     if (!Communcation::getInstance().init())
     {
+        ROS_ERROR("communcation_mcu_node init failed");
         return -1;
     }
 

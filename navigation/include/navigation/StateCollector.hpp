@@ -42,6 +42,11 @@ class StateCollector
     ~StateCollector();
 
     void update();
+    
+    void setCarTwist();
+    void setCarOdom();
+    void setCarPower();
+
     inline Pose getCarPose() { return CarPose_; }
     inline WorkState getState() { return state_; }
     nav_msgs::Odometry getOdom();
