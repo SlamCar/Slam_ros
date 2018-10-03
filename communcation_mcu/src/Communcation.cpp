@@ -137,11 +137,11 @@ void Communcation::updateFeeback()
     SerialPackage feedmsg;
     DataBase* db = DataBase::get();
 
-    if(Serial_.available())
-    {
-        Serial_.read((uint8_t *)&feedmsg,(sizeof(db->feedbackData_)+7));
-        if()    
-    }
+    // if(Serial_.available())
+    // {
+    //     Serial_.read((uint8_t *)&feedmsg,(sizeof(db->feedbackData_)+7));
+    //     if()    
+    // }
 
     msgs::FeedBack feedback;
     feedback.Velocity = db->feedbackData_.Velocity;

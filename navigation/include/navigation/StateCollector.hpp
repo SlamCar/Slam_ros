@@ -3,7 +3,7 @@
 #include <ros/ros.h>
 
 #include "Pose.hpp"
-#include "msgs/Feedback.h"
+#include "msgs/FeedBack.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
@@ -54,7 +54,7 @@ class StateCollector
 
     
   private:
-    void feedbackCallback(const msgs::Feedback::ConstPtr &feedback);
+    void feedbackCallback(const msgs::FeedBack::ConstPtr &feedback);
 
     WorkState state_;
     Pose CarPose_;
