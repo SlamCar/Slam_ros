@@ -7,6 +7,8 @@
 #include "Protocal.h"
 #include "DataBase.hpp"
 
+typedef std::vector<uint8_t> Buffer;
+
 class Transport;
 
 class Ipc_dataframe : public Protocalframe
@@ -28,6 +30,8 @@ class Ipc_dataframe : public Protocalframe
         bool send_message(const CmdId id);
         bool send_message(const CmdId id, unsigned char* data, unsigned char len);
         bool send_message(SerialPackage* msg);
+
+        bool databuffer(uint8_t data, Buffer &rxpack);
     
     private:
         SerialPackage active_rx_msg;
