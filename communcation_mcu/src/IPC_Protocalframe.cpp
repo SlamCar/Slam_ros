@@ -19,7 +19,6 @@ bool Ipc_dataframe::init(){
 bool Ipc_dataframe::data_recv(unsigned char c)
 {
     //ROS_DEBUG("%02x ", c);
-
     switch (recv_state)
     {
         case STATE_RECV_NONE:
@@ -211,4 +210,72 @@ bool Ipc_dataframe::send_message(SerialPackage* msg)
 	// }
     // std::cout << std::endl;
     return true;
+}
+
+
+bool Ipc_dataframe::databuffer(uint8_t data, Buffer &rxpack)
+{
+    static uint8_t flag = 0;
+    static uint8_t len = 0;
+
+    switch(flag)
+    {
+    /*--------------------head---------------------*/    
+         /***moduleId***/
+        case 0: 
+            rxpack.clear(); 
+            if (data == 0x03) 
+            {
+                rxpack.push_back(data);
+                flag ++;
+            }
+            else flag = 0;
+            break;
+        case 1:
+            if (data == 0x9c) 
+            {
+                rxpack.push_back(data);
+                flag ++;
+            }
+            else 
+            {
+                flag = 0;
+                rxpack.clear(); //头错误，就清空buffer
+            }
+        /***push dataId***/
+        case 3: rxpack.push_back(data); flag ++;
+            break;
+        case 4: rxpack.push_back(data); flag ++;
+            break;
+        /***push dataLen***/
+        case 5: rxpack.push_back(data); flag ++;
+            break;
+        /***push recv_len***/
+        case 6: rxpack.push_back(data); flag ++;
+
+    /*--------------------data---------------------*/
+        case 7: 
+            if (rxpack.at(5) == len)   //相当于rxpack[5] == len 数据放完就
+            {
+                len = 0;
+                flag ++;
+            } 
+            rxpack.push_back(data);
+            len++;
+            if(len > rxpack.at(5))
+            {
+                rxpack.clear();
+                ROS_ERROR("Data overflow!!!");
+                return false;
+            }
+            break;
+
+    /*--------------------check---------------------*/
+        case 8: rxpack.push_back(data); flag = 53;
+            break;
+
+    /*------------------receive ok!!!---------------------*/        
+        case 53: return true;  
+    }
+    return false;
 }

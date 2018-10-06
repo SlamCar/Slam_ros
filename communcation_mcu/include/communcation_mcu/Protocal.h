@@ -34,7 +34,7 @@ enum CmdId
      */
     DEBUG_QT_COMMOND      = 0xA010u,
     /**
-     * IPC -> STM32
+     * QT || IPC -> STM32
      */
     CMD_GET_VERSION       = 0x1010u,
     CMD_IPC_COMMOND       = 0x2010u,
@@ -107,6 +107,7 @@ class Protocalframe
         virtual bool data_parse()=0;                     // 
         virtual bool interact(const CmdId id)=0;
 };
+
 
 #ifdef __cplusplus
 }
