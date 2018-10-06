@@ -46,9 +46,11 @@ class Communcation
     bool udpInit();
     
     bool ConnectState_;
+    bool need_update_speed_;
     double CommuncateFrequency_;
     CommunicateType Type_;                      //Communcate of the car
-    McuSerial Serial_;
+    McuSerial serial_;
+    // boost::shared_ptr<McuSerial> serial_;
 
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedBackPub_;                 

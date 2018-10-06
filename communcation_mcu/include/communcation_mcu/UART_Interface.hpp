@@ -27,13 +27,14 @@ public:
     /**
      * constructor.
      */
-    McuSerial()
+    McuSerial():timeout_(1000),baudrate_(115200),portId_("/dev/ttyUSB0")
     {
-        ros::NodeHandle private_nh("~");
+        ROS_DEBUG("[McuSerial]");
+        // ros::NodeHandle private_nh("~");
 
-        private_nh.param("baudrate", baudrate_, 115200);
-        private_nh.param("timeout", timeout_, 1000);
-        private_nh.param("portId", portId_, std::string("/dev/ttyUSB0"));
+        // private_nh.param("baudrate", baudrate_, 115200);
+        // private_nh.param("timeout", timeout_, 1000);
+        // private_nh.param("portId", portId_, std::string("/dev/ttyUSB0"));
     }
 
     /**
@@ -83,9 +84,15 @@ public:
         // open serial port for r&w
         try
         {
-            serialPort_.setPort(portId_);
-            serialPort_.setBaudrate(baudrate_);
-            serial::Timeout to = serial::Timeout::simpleTimeout(timeout_);
+            // serialPort_.setPort(portId_);
+            // serialPort_.setBaudrate(baudrate_);
+            // serial::Timeout to = serial::Timeout::simpleTimeout(timeout_);
+            // serialPort_.setTimeout(to);
+            // serialPort_.open();
+
+            serialPort_.setPort("/dev/ttyUSB0");
+            serialPort_.setBaudrate(115200);
+            serial::Timeout to = serial::Timeout::simpleTimeout(1000);
             serialPort_.setTimeout(to);
             serialPort_.open();
         }
@@ -94,18 +101,20 @@ public:
             ROS_ERROR_STREAM("Unable to open serial port." << e.what());
             return false;
         }
-        catch (serial::SerialException &e)
+        // catch (serial::SerialException &e)
+        // {
+        //     ROS_ERROR_STREAM(e.what());
+        //     return false;
+        // }
+        // catch (std::invalid_argument &e)
+        // {
+        //     ROS_ERROR_STREAM(e.what());
+        //     return false;
+        // }
+        if(serialPort_.isOpen())
         {
-            ROS_ERROR_STREAM(e.what());
-            return false;
+            ROS_INFO_STREAM("Connected.");
         }
-        catch (std::invalid_argument &e)
-        {
-            ROS_ERROR_STREAM(e.what());
-            return false;
-        }
-
-        ROS_INFO_STREAM("Connected.");
         return true;
     }
 
@@ -219,6 +228,11 @@ public:
             ROS_WARN_STREAM("Sync header failed!");
             i = 0;
         }
+    }
+
+    bool isfree()
+    {
+        return serialPort_.available();
     }
     
 private:

@@ -115,11 +115,11 @@ bool Ipc_dataframe::data_parse()
 
 bool Ipc_dataframe::interact(const CmdId id)
 {
-    printf("Send ... CmdId: %d \r\n", id);
+   // printf("Send ... CmdId: %d \r\n", id);
 
     DataBase* dc = DataBase::get();
-    dc->cmdvelData_.driverVelocity = 1.0;
-    dc->cmdvelData_.steeringAngle = 2.0;
+    // dc->cmdvelData_.driverVelocity = 1.0;
+    // dc->cmdvelData_.steeringAngle = 2.0;
 
     switch (id)
     {
@@ -129,6 +129,7 @@ bool Ipc_dataframe::interact(const CmdId id)
 
         case CMD_IPC_COMMOND:
             send_message(id, (uint8_t *)&dc->cmdvelData_, sizeof(dc->cmdvelData_));
+            ROS_DEBUG("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             // ROS_DEBUG("data size is %d: ",sizeof(dc->cmdvel_)); 
             break;
         case STM32_FEED_BACK:
@@ -138,7 +139,8 @@ bool Ipc_dataframe::interact(const CmdId id)
 
     if (!recv_proc())
         return false;
-
+    
+    ROS_DEBUG("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     return true;
 }
 
@@ -147,6 +149,7 @@ bool Ipc_dataframe::recv_proc()
     int i=0;
     trans->setTimeout(150);
     bool got=false;
+    ROS_DEBUG("recv_proc!!!");
     while(true)
     {
         Buffer data = trans->read();
@@ -202,10 +205,10 @@ bool Ipc_dataframe::send_message(SerialPackage* msg)
     Buffer data((unsigned char*)msg, (unsigned char*)msg+sizeof(msg->head_)+msg->head_.dataLen+1);
     trans->write(data);
 
-    for(int i=0;i < data.size();i++)
-	{
-		std::cout << data[i] - '0' << "     "; // ASII '0' = 48
-	}
-    std::cout << std::endl;
+    // for(int i=0;i < data.size();i++)
+	// {
+	// 	std::cout << data[i] - '0' << "     "; // ASII '0' = 48
+	// }
+    // std::cout << std::endl;
     return true;
 }

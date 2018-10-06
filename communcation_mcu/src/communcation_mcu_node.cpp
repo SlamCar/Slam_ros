@@ -16,8 +16,11 @@ int main(int argc, char **argv)
         ROS_ERROR("communcation_mcu_node init failed");
         return -1;
     }
-
-    ROS_INFO_STREAM("MCU communcation started...");
+    else
+    {
+        ROS_INFO_STREAM("MCU communcation started...");
+        Communcation::getInstance().updating();
+    }
 
     ros::spin();
 
