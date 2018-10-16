@@ -8,8 +8,8 @@ extern "C" {
 #endif
 
 #define HEADER_BYTESIZE             6
-#define BODY_MAX_BYTESIZE           52
-#define CRC_BYTESIZE                1
+#define BODY_MAX_BYTESIZE           50
+#define CRC_BYTESIZE                2
 
 #define MODULEID                    0x039Cu
 
@@ -52,14 +52,13 @@ typedef struct DataHead_
     uint16_t moduleId;
     uint16_t dataId;
     uint8_t  dataLen;
-    uint8_t  recv_len;
 } Head;
 
 typedef struct SerialPackage_
 {
     Head head_;      // fixed for MODULEID  9.24  birthday
-    uint8_t byData_[BODY_MAX_BYTESIZE]; // data content, max size is 1024, append crc16
-    uint8_t check_;
+    uint8_t byData_[BODY_MAX_BYTESIZE]; // data content, max size is 50
+    uint16_t check_;//append crc16
    
     SerialPackage_(){}
     SerialPackage_(uint16_t cmd_id, uint8_t* data = 0,uint16_t len = 0)
@@ -67,7 +66,7 @@ typedef struct SerialPackage_
         head_.moduleId = MODULEID;
         head_.dataId = cmd_id;
         head_.dataLen = len;
-        head_.recv_len = 0;
+        //head_.recv_len = 0;
 
         check_ = 0;
         

@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     else
     {
         ROS_INFO_STREAM("MCU communcation started...");
-        Communcation::getInstance().updating();
+        Communcation::getInstance().updateDataBase();
     }
 
     ros::spin();

@@ -141,8 +141,6 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 add_executable(${PROJECT_NAME}_node 
   src/communcation_mcu_node.cpp
   src/Communcation.cpp
-  src/SerialTransport.cpp
-  src/IPC_Protocalframe.cpp
 )
 
 # add_executable(${PROJECT_NAME}_node src/my_serial_test_node.cpp)
