@@ -5,16 +5,14 @@
 #include <string>
 #include <vector>
 #include <ros/ros.h>
+#include <map>
 
 #include "msgs/CmdVel.h"
 #include "msgs/FeedBack.h"
+#include "SerialPack.hpp"
 #include "UART_Interface.hpp"
 #include "SerialPack.hpp"
-#include "SerialTransport.hpp"
-#include "Transport.hpp"
 #include "DataBase.hpp"
-#include "IPC_Protocalframe.hpp"
-
 
 enum class CommunicateType : uint32_t
 {
@@ -36,7 +34,9 @@ class Communcation
 
     bool init();
 
-    void updating();
+    void updateDataBase();
+
+    void sendData();
 
 
   private:
@@ -46,39 +46,24 @@ class Communcation
     bool udpInit();
     
     bool ConnectState_;
-    bool need_update_speed_;
     double CommuncateFrequency_;
-    CommunicateType Type_;                      //Communcate of the car
+    CommunicateType Type_;                      
     McuSerial serial_;
-    // boost::shared_ptr<McuSerial> serial_;
 
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedBackPub_;                 
     ros::Publisher carParamPub_;                // some Param of the car
 
+    // std::map<uint16_t, std::function<void(DataPack)>> receive_;
+
     msgs::FeedBack feedBackMsg_;
- 
-    boost::shared_ptr<Transport> trans_;        // class for serial or udp
-    boost::shared_ptr<Protocalframe> frame_;    // class for protocal_package
     
     inline void setCommunicateType(CommunicateType type) {Type_ = type;}
-    
-    /**
-     * save data : external --> database  
-     **/
-    void cmdVelCallback(const msgs::CmdVel::ConstPtr &cmdVel);
 
     /**
-     * update data :  database --> external
+     * update data 
      **/
-    void updateCmd();
+    void updateCmd(const msgs::CmdVel::ConstPtr &cmdVel);
     void updateFeeback(); //board --> database --> pub
-
-    /**
-     * data check
-     **/
-    bool dataRight(SerialPackage msg,uint8_t checksum);
-    
-    
 
 };
