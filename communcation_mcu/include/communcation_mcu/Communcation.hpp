@@ -6,6 +6,7 @@
 #include <vector>
 #include <ros/ros.h>
 #include <map>
+#include <boost/thread.hpp>
 
 #include "msgs/CmdVel.h"
 #include "msgs/FeedBack.h"
@@ -30,25 +31,30 @@ class Communcation
         return instance;
     }
 
-    virtual ~Communcation() {}
+     ~Communcation();
 
     bool init();
 
-    void updateDataBase();
-
-    void sendData();
-
+    void run();
 
   private:
 
     Communcation();
+
     bool serialInit();
     bool udpInit();
     
+    void updateDataBase();
+    void sendData();
+    
     bool ConnectState_;
-    double CommuncateFrequency_;
+    double ReciveFrequency_;
+    double SendFrequency_;
     CommunicateType Type_;                      
     McuSerial serial_;
+    
+    boost::shared_ptr<boost::thread> sendThread_;
+    boost::shared_ptr<boost::thread> receiveThread_;
 
     ros::Subscriber cmdVelSub_;
     ros::Publisher feedBackPub_;                 
@@ -59,11 +65,15 @@ class Communcation
     msgs::FeedBack feedBackMsg_;
     
     inline void setCommunicateType(CommunicateType type) {Type_ = type;}
-
     /**
-     * update data 
+     * update  database 
      **/
     void updateCmd(const msgs::CmdVel::ConstPtr &cmdVel);
-    void updateFeeback(); //board --> database --> pub
+    void updateFeeback(); 
 
+    /**
+     * send  data 
+     **/
+    void sendCmd();
+    void sendFeeback();
 };

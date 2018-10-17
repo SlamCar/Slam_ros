@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 #define HEADER_BYTESIZE             6
-#define BODY_MAX_BYTESIZE           50
+#define BODY_MAX_BYTESIZE           10
 #define CRC_BYTESIZE                2
 
 #define MODULEID                    0x039Cu
