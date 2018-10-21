@@ -21,7 +21,7 @@ public:
     /**
      * constructor.
      */
-    McuSerial():timeout_(1000),baudrate_(256000),portId_("/dev/ttyUSB0")
+    McuSerial():timeout_(1000),baudrate_(115200),portId_("/dev/ttyUSB0")
     {
         ROS_DEBUG("[McuSerial]");
         // ros::NodeHandle private_nh("~");
