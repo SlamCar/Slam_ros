@@ -13,16 +13,6 @@ extern "C" {
 
 #define MODULEID                    0x039Cu
 
-enum RECEIVE_STATE{
-    STATE_RECV_NONE = 0,
-    STATE_RECV_HEARD,
-    STATE_RECV_ID_H,
-    STATE_RECV_ID_L,
-    STATE_RECV_LEN,
-    STATE_RECV_DATA,
-    STATE_RECV_CHECK
-};
-
 enum CmdId
 {
     /**
@@ -52,6 +42,7 @@ typedef struct DataHead_
     uint16_t moduleId;
     uint16_t dataId;
     uint8_t  dataLen;
+    uint8_t  recvLen;
 } Head;
 
 typedef struct SerialPackage_
@@ -60,37 +51,6 @@ typedef struct SerialPackage_
     uint8_t byData_[BODY_MAX_BYTESIZE]; // data content, max size is 50
     uint16_t check_;//append crc16
 } SerialPackage;
-
-// typedef struct SerialPackage_
-// {
-//     Head head_;      // fixed for MODULEID  9.24  birthday
-//     uint8_t byData_[BODY_MAX_BYTESIZE]; // data content, max size is 50
-//     uint16_t check_;//append crc16
-   
-//     SerialPackage_(){}
-//     SerialPackage_(uint16_t cmd_id, uint8_t* data = 0,uint16_t len = 0)
-//     {
-//         head_.moduleId = MODULEID;
-//         head_.dataId = cmd_id;
-//         head_.dataLen = len;
-//         //head_.recv_len = 0;
-
-//         check_ = 0;
-        
-//         if(data != 0 && len != 0)
-//             memcpy(byData_, data, len);
-        
-//         uint8_t*  _send_buffer = (uint8_t*)this;
-
-//         unsigned int i = 0;
-//         for(i = 0; i < sizeof(head_)+head_.dataLen; i++)
-//             check_ += _send_buffer[i];
-        
-//         _send_buffer[sizeof(head_)+head_.dataLen] = check_;
-//     }
-
-// } SerialPackage;
-
 
 typedef struct IpcCommand_
 {

@@ -52,6 +52,7 @@ class DataPack : public ProtocalPack
     {
         msg_.head_.moduleId = MODULEID; 
         msg_.head_.dataId = cmd;
+        msg_.head_.recvLen = 0;
     }
 
     inline void setDataId(uint16_t cmd) { msg_.head_.dataId = cmd; }

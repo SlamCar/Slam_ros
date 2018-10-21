@@ -141,17 +141,6 @@ void Communcation::sendData()
     
 }
 
-void Communcation::sendFeeback()
-{
-    DataBase* db = DataBase::get();
-
-    msgs::FeedBack feedback;
-    feedback.Velocity = db->feedbackData_.Velocity;
-    feedback.Angle = db->feedbackData_.Angle;
-    //ROS_DEBUG("send feedback msg: Velocity = %f , Angle = %f",feedback.Velocity, feedback.Angle);
-    feedBackPub_.publish(feedback);  
-}
-
 bool Communcation::serialInit()
 {
     /**
@@ -204,11 +193,25 @@ void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
     db->cmdvelData_.driverVelocity = 1.2;
     db->cmdvelData_.steeringAngle = 3.4;
     #endif
-    // SerialPackage cmdmsg(CMD_IPC_COMMOND, (uint8_t *)&db->cmdvelData_, sizeof(db->cmdvelData_));
-    // serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
-    //                                   + BODY_MAX_BYTESIZE
-    //                                   + CRC_BYTESIZE); 
+
+    DataPack cmdmsg(CMD_IPC_COMMOND);
+    cmdmsg.setLen(sizeof(db->cmdvelData_));
+    cmdmsg.setBody(&db->cmdvelData_, sizeof(db->cmdvelData_));
+
+    serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
+                                      + BODY_MAX_BYTESIZE
+                                      + CRC_BYTESIZE);  
+}
+
+void Communcation::sendFeeback()
+{
+    DataBase* db = DataBase::get();
+
+    msgs::FeedBack feedback;
+    feedback.Velocity = db->feedbackData_.Velocity;
+    feedback.Angle = db->feedbackData_.Angle;
     
+    feedBackPub_.publish(feedback);  
 }
 
 void Communcation::updateFeeback(uint8_t* data)
@@ -218,7 +221,8 @@ void Communcation::updateFeeback(uint8_t* data)
     DataBase* db = DataBase::get();
     
     memcpy(&db->feedbackData_, data, sizeof(db->feedbackData_));  
-    ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",db->feedbackData_.Velocity, db->feedbackData_.Angle);
+    ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",
+                db->feedbackData_.Velocity, db->feedbackData_.Angle);
 }
 
 

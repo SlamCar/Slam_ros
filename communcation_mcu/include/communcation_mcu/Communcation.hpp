@@ -60,10 +60,9 @@ class Communcation
     ros::Publisher carParamPub_;                // some Param of the car
 
     // std::map<uint16_t, std::function<void(DataPack)>> receive_;
-
-    msgs::FeedBack feedBackMsg_;
     
     inline void setCommunicateType(CommunicateType type) {Type_ = type;}
+    
     /**
      * update  database 
      **/
