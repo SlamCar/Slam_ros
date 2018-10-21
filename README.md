@@ -8,21 +8,6 @@
 
 `Ubuntu 16.04 ros-kinetic`。
 
-## 项目结构
-```
---- src
- |- .gitlab 
- |- .vscode
- |- localizer
- |- communcation_mcu
- |- msgs
- |- navigation
- |- 
- |- 
- |- 
- └- 
-```
-
 ## 下载
 ```
 $ cd ~/catkin_ws/src
