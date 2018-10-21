@@ -12,7 +12,6 @@
 #include "msgs/FeedBack.h"
 #include "SerialPack.hpp"
 #include "UART_Interface.hpp"
-#include "SerialPack.hpp"
 #include "DataBase.hpp"
 
 enum class CommunicateType : uint32_t
@@ -69,7 +68,7 @@ class Communcation
      * update  database 
      **/
     void updateCmd(const msgs::CmdVel::ConstPtr &cmdVel);
-    void updateFeeback(); 
+    void updateFeeback(uint8_t* data); 
 
     /**
      * send  data 
