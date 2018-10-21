@@ -60,8 +60,12 @@ void Communcation::run()
 
 void Communcation::updateDataBase()
 {
-    //ros::Rate loop(ReciveFrequency_);
+    // SerialPackage RXbuffer;
+    DataPack RXbuffer;
+
+    ros::Rate loop(ReciveFrequency_);
     ROS_DEBUG("[updateDataBase...]");
+
     while (ros::ok())
     {
         if(!ConnectState_) 
@@ -69,29 +73,43 @@ void Communcation::updateDataBase()
             ROS_ERROR("Connection is broken");
             return ;
         }
-        #if 0
+
         if(serial_.isfree())
         {
-        serial_.read((uint8_t *)&pack,(  HEADER_BYTESIZE 
-                                        + sizeof(db->feedbackData_)
-                                        + CRC_BYTESIZE ));
-        switch(id)
-        {
-            case STM32_FEED_BACK: updateFeeback();
+            serial_.read(RXbuffer.data(), (  HEADER_BYTESIZE 
+                                            + BODY_MAX_BYTESIZE
+                                            + CRC_BYTESIZE ));
 
+            ROS_DEBUG("dataId:[%x]",RXbuffer.dataId());
         }
-        #endif
-        updateFeeback();
 
-        // if (loop.cycleTime() > ros::Duration(1.0 / ReciveFrequency_))
-        // {
-        //     ROS_WARN("ReciveFrequency_ loop missed its desired rate of %.2fHz... the heartbeat actually took %.2fHz",
-        //                 ReciveFrequency_, 1/loop.cycleTime().toSec());
-        // }
+        if(!RXbuffer.checkCrc())
+        {
+            ROS_WARN("data check error!");
+            return;
+        }
 
-        // // sleep to make sure the update frequency
-        // loop.sleep();
-	    // ros::spinOnce();
+        switch(RXbuffer.dataId())
+        {
+            case STM32_FEED_BACK: 
+                updateFeeback(RXbuffer.body());
+                break;
+
+            default:  
+                ROS_WARN("no this dataId!!! ErrorId[%x]",RXbuffer.dataId());
+                break;
+        }
+    
+
+        if (loop.cycleTime() > ros::Duration(1.0 / ReciveFrequency_))
+        {
+            ROS_WARN("ReciveFrequency_ loop missed its desired rate of %.2fHz... the heartbeat actually took %.2fHz",
+                        ReciveFrequency_, 1/loop.cycleTime().toSec());
+        }
+
+        // sleep to make sure the update frequency
+        loop.sleep();
+	    ros::spinOnce();
     }
 }
 
@@ -110,7 +128,6 @@ void Communcation::sendData()
 
         sendFeeback();
 
-
         if (loop.cycleTime() > ros::Duration(1.0 / SendFrequency_))
         {
             ROS_WARN("SendFrequency_ loop missed its desired rate of %.2fHz... the heartbeat actually took %.2fHz",
@@ -122,17 +139,6 @@ void Communcation::sendData()
 	    ros::spinOnce();
     }
     
-}
-
-void Communcation::sendFeeback()
-{
-    DataBase* db = DataBase::get();
-
-    msgs::FeedBack feedback;
-    feedback.Velocity = db->feedbackData_.Velocity;
-    feedback.Angle = db->feedbackData_.Angle;
-    //ROS_DEBUG("send feedback msg: Velocity = %f , Angle = %f",feedback.Velocity, feedback.Angle);
-    feedBackPub_.publish(feedback);  
 }
 
 bool Communcation::serialInit()
@@ -187,62 +193,36 @@ void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
     db->cmdvelData_.driverVelocity = 1.2;
     db->cmdvelData_.steeringAngle = 3.4;
     #endif
-    SerialPackage cmdmsg(CMD_IPC_COMMOND, (uint8_t *)&db->cmdvelData_, sizeof(db->cmdvelData_));
-    serial_.write((uint8_t *)&cmdmsg,(sizeof(db->cmdvelData_)+7)); //15
-    
+
+    DataPack cmdmsg(CMD_IPC_COMMOND);
+    cmdmsg.setLen(sizeof(db->cmdvelData_));
+    cmdmsg.setBody(&db->cmdvelData_, sizeof(db->cmdvelData_));
+
+    serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
+                                      + BODY_MAX_BYTESIZE
+                                      + CRC_BYTESIZE);  
 }
 
-void Communcation::updateFeeback()
+void Communcation::sendFeeback()
 {
-    SerialPackage feedbackmsg;
+    DataBase* db = DataBase::get();
 
-    memset(&feedbackmsg, 0, sizeof(SerialPackage));
+    msgs::FeedBack feedback;
+    feedback.Velocity = db->feedbackData_.Velocity;
+    feedback.Angle = db->feedbackData_.Angle;
+    
+    feedBackPub_.publish(feedback);  
+}
 
-   // DataPack 
+void Communcation::updateFeeback(uint8_t* data)
+{
+    ROS_DEBUG("[updateFeeback]");
+
     DataBase* db = DataBase::get();
     
-    if(serial_.isfree())
-    {
-        // serial_.read((uint8_t *)&feedbackmsg,(  HEADER_BYTESIZE 
-        //                                       + sizeof(db->feedbackData_)
-        //                                       + CRC_BYTESIZE ));
-        serial_.read((uint8_t *)&feedbackmsg,(  HEADER_BYTESIZE 
-                                              + BODY_MAX_BYTESIZE
-                                              + CRC_BYTESIZE ));
-
-        #if 0
-        for(int t = 0; t < sizeof(db->feedbackData_); t++)
-            ROS_INFO("[0x%02x]",feedbackmsg.byData_[t]);
-
-        ROS_INFO("_______________________________________");
-        #endif
-
-        if(feedbackmsg.head_.moduleId != 0x039c)
-            return;
-        
-        uint16_t crc = 0;
-        uint8_t *buffer = (uint8_t *)&feedbackmsg;
-        for(int i = 0; i < HEADER_BYTESIZE + feedbackmsg.head_.dataLen; i++)
-            crc += buffer[i];       
-    
-        ROS_WARN_COND(crc != feedbackmsg.check_ ,
-                     "feedbackmsg.check:[%x], crc[%x]",
-                     feedbackmsg.check_, crc);
-
-        // ROS_INFO("moduleId : %x",feedbackmsg.head_.moduleId);
-        //ROS_INFO("data crc : %x",feedbackmsg.check_);
-
-        if(crc == feedbackmsg.check_)
-        {
-            memcpy(&db->feedbackData_,&feedbackmsg.byData_,sizeof(db->feedbackData_));  
-            ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",db->feedbackData_.Velocity, db->feedbackData_.Angle);
-        }
-        else
-        {
-            ROS_WARN("data error");
-        }
-
-    }   
+    memcpy(&db->feedbackData_, data, sizeof(db->feedbackData_));  
+    ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",
+                db->feedbackData_.Velocity, db->feedbackData_.Angle);
 }
 
 

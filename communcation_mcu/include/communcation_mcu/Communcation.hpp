@@ -12,7 +12,6 @@
 #include "msgs/FeedBack.h"
 #include "SerialPack.hpp"
 #include "UART_Interface.hpp"
-#include "SerialPack.hpp"
 #include "DataBase.hpp"
 
 enum class CommunicateType : uint32_t
@@ -61,15 +60,14 @@ class Communcation
     ros::Publisher carParamPub_;                // some Param of the car
 
     // std::map<uint16_t, std::function<void(DataPack)>> receive_;
-
-    msgs::FeedBack feedBackMsg_;
     
     inline void setCommunicateType(CommunicateType type) {Type_ = type;}
+    
     /**
      * update  database 
      **/
     void updateCmd(const msgs::CmdVel::ConstPtr &cmdVel);
-    void updateFeeback(); 
+    void updateFeeback(uint8_t* data); 
 
     /**
      * send  data 
