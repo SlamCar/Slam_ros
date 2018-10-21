@@ -11,17 +11,16 @@ int main(int argc, char **argv)
         ros::console::notifyLoggerLevelsChanged();
     }
 
-    if (!Communcation::getInstance().init())
+    if (!ros::master::check())
     {
-        ROS_ERROR("communcation_mcu_node init failed");
+        ROS_ERROR("Please start roscore first.");
         return -1;
     }
-    else
-    {
-        ROS_INFO_STREAM("MCU communcation started...");
-        Communcation::getInstance().updateDataBase();
-    }
 
+    ROS_ASSERT_MSG(Communcation::getInstance().init(),"communcation_mcu_node init failed");
+
+    Communcation::getInstance().run();
+    
     ros::spin();
 
     return 0;

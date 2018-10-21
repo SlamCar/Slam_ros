@@ -4,12 +4,6 @@
 #include <ros/ros.h>
 #include <string>
 
-typedef union{
-    unsigned char cvalue[4];
-    float fvalue;
-}float_union;
-
-
 class TransPort
 {
   public:
