@@ -13,8 +13,6 @@ Communcation::Communcation()
     feedBackPub_ = nh.advertise<msgs::FeedBack>("feedback",100);
 
     setCommunicateType(CommunicateType::SERIAL);
-
-    // receive_[STM32_FEED_BACK] = boost::bind(&Communcation::updateFeeback, this, _1);
 }
 
 Communcation::~Communcation()
@@ -127,6 +125,7 @@ void Communcation::sendData()
         }
 
         sendFeeback();
+        sendCmd();
 
         if (loop.cycleTime() > ros::Duration(1.0 / SendFrequency_))
         {
@@ -178,29 +177,18 @@ bool Communcation::udpInit()
      **/
 }
 
-void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
+void Communcation::sendCmd()
 {
-    ROS_DEBUG("[updateCmd]");
-
     DataBase* db = DataBase::get();
-    db->cmdvelData_.driverVelocity = cmdVel->driverVelocity;
-    db->cmdvelData_.steeringAngle = cmdVel->steeringAngle;
-    
-    /**
-     * Test
-     * */
-    #if 0
-    db->cmdvelData_.driverVelocity = 1.2;
-    db->cmdvelData_.steeringAngle = 3.4;
-    #endif
 
     DataPack cmdmsg(CMD_IPC_COMMOND);
     cmdmsg.setLen(sizeof(db->cmdvelData_));
-    cmdmsg.setBody(&db->cmdvelData_, sizeof(db->cmdvelData_));
+    cmdmsg.setBody(reinterpret_cast<uint8_t *>(&db->cmdvelData_), sizeof(db->cmdvelData_));
+    cmdmsg.generateCrc();
 
     serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
                                       + BODY_MAX_BYTESIZE
-                                      + CRC_BYTESIZE);  
+                                      + CRC_BYTESIZE); 
 }
 
 void Communcation::sendFeeback()
@@ -212,6 +200,19 @@ void Communcation::sendFeeback()
     feedback.Angle = db->feedbackData_.Angle;
     
     feedBackPub_.publish(feedback);  
+}
+
+void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
+{
+    ROS_DEBUG("[updateCmd]");
+
+    DataBase* db = DataBase::get();
+    
+    db->cmdvelData_.driverVelocity = cmdVel->driverVelocity;
+    db->cmdvelData_.steeringAngle = cmdVel->steeringAngle;
+    ROS_DEBUG("update Cmd msg: Velocity = %f , Angle = %f",
+                db->cmdvelData_.driverVelocity, db->cmdvelData_.steeringAngle);
+ 
 }
 
 void Communcation::updateFeeback(uint8_t* data)
