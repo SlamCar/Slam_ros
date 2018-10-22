@@ -72,8 +72,11 @@ class DataPack : public ProtocalPack
     inline uint8_t *data() { return reinterpret_cast<uint8_t *>(&msg_); }
     inline uint8_t *body() 
     { 
+        #if 0
         for(int t = 0; t < 8; t++)
-            ROS_INFO("[0x%02x]",msg_.byData_[t]);    
+            ROS_INFO("[0x%02x]",msg_.byData_[t]);
+        #endif 
+           
         return msg_.byData_; 
     }
 
@@ -86,16 +89,11 @@ class DataPack : public ProtocalPack
     {
         uint16_t crc = crcVerify(reinterpret_cast<uint8_t *>(&msg_), HEADER_BYTESIZE + msg_.head_.dataLen);
         msg_.check_ = crc;
-        //std::memcpy(&msg_.byData[msg_.head_.dataLen], reinterpret_cast<uint8_t *>(&crc), sizeof(uint16_t));
     }
 
     bool checkCrc()
     {
-        //uint16_t crcRcv = 0;
-        //std::memcpy(reinterpret_cast<uint8_t *>(&crcRcv), &msg_.byData[msg_.head_.dataLen], sizeof(uint16_t));
-
         uint16_t crc = crcVerify(reinterpret_cast<uint8_t *>(&msg_), HEADER_BYTESIZE + len());
-        //return crcRcv == crc;
         return msg_.check_ == crc;
     }
 
