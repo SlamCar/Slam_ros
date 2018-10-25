@@ -57,7 +57,11 @@ class DataBase
     void save_parameter();
 
   private:
-    DataBase(){}
+    DataBase()
+    {
+        memset(&cmdvelData_, 0, sizeof(cmdvelData_));
+        memset(&feedbackData_, 0 ,sizeof(feedbackData_));
+    }
 
   public:
     struct Parameter  parameter_;
