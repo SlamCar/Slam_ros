@@ -45,11 +45,10 @@ class Navigation
      */
     void runner();
 
-
     boost::shared_ptr<boost::thread> executor_;
 
-    // publish velocity command
-    ros::Publisher velPub_;
+    ros::Publisher cmdVelPub_;
+    ros::Subscriber feedBackSub_
   
     boost::shared_ptr<boost::thread> test_;
 

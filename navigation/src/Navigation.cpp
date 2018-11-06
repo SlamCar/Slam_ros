@@ -7,7 +7,10 @@ Navigation::Navigation()
 
     private_nh.param("controller_frequency_", controllerFrequency_, 50.0);
     
-    velPub_ = nh.advertise<msgs::CmdVel>("cmd_vel", 10);
+    cmdVelPub_ = nh.advertise<msgs::CmdVel>("cmd_vel", 10);
+    // feedBackSub_ = nh.subscribe<msgs::CmdVel>("feedback",
+    //                                         10,
+    //                                         boost::bind(&Navigation::feedbackCallback, this, _1));   
 
 }
 
