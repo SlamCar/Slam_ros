@@ -45,40 +45,15 @@ class Navigation
      */
     void runner();
 
-    /**
-     * \brief test switch open or close 
-     */
-    void test_switch(bool flag);
-    
-    /**
-     * \brief start a test task
-     */
-    void test_runner();
 
-    /**
-     * \brief handle error
-     * \return true if can continue, false otherwise
-     */
-    void handleError();
-
-    // boost::shared_ptr<TaskManager> tm_;
-    // boost::shared_ptr<StateManager> sm_;
-    // boost::shared_ptr<Planner> planner_;
     boost::shared_ptr<boost::thread> executor_;
 
     // publish velocity command
     ros::Publisher velPub_;
-
-    //test cmd_vel
-    bool test_flag_;
-    double test_driverVelocity_;
-    double test_steeringAngle_;
   
     boost::shared_ptr<boost::thread> test_;
 
     double controllerFrequency_;
-    std::string mapPackageName_;
-    std::string mapFileName_;
 
     PidController pidController_;
 };
