@@ -1,0 +1,8 @@
+<launch>
+
+  <node pkg="tourguide" type="move_keyBoard.py" name="move_keyBoard" output="screen">
+    <param name="speed" value="0.0" type="double"/>
+    <param name="angle" value="0.0" type="double"/>
+  </node>
+  
+</launch>
