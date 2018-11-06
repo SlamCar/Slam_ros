@@ -40,6 +40,8 @@ class Communcation
 
     Communcation();
 
+    inline void setCommunicateType(CommunicateType type) {Type_ = type;}
+    
     bool serialInit();
     bool udpInit();
     
@@ -51,6 +53,7 @@ class Communcation
     double SendFrequency_;
     CommunicateType Type_;                      
     McuSerial serial_;
+    // RobotConfig bdg;
     
     boost::shared_ptr<boost::thread> sendThread_;
     boost::shared_ptr<boost::thread> receiveThread_;
@@ -59,15 +62,14 @@ class Communcation
     ros::Publisher feedBackPub_;                 
     ros::Publisher carParamPub_;                // some Param of the car
 
-    // std::map<uint16_t, std::function<void(DataPack)>> receive_;
-    
-    inline void setCommunicateType(CommunicateType type) {Type_ = type;}
-    
+    std::map<uint16_t, std::function<void(DataPack)>> updater_;
+
     /**
      * update  database 
      **/
     void updateCmd(const msgs::CmdVel::ConstPtr &cmdVel);
-    void updateFeeback(uint8_t* data); 
+    void updateFeeback(DataPack msg); 
+    void updateHeartbeat(DataPack msg); 
 
     /**
      * send  data 

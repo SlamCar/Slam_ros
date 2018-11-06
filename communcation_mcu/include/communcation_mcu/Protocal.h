@@ -29,6 +29,7 @@ enum CmdId
     CMD_GET_VERSION       = 0x1010u,
     CMD_IPC_COMMOND       = 0x2010u,
     CMD_RESET             = 0x2020u,
+    CMD_SET_PARAM         = 0x2030u,
     /**
      * STM32 -> IPC || QT
      */
@@ -57,8 +58,6 @@ typedef struct IpcCommand_
     float driverVelocity;
     float steeringAngle;
 } IpcCommand;
-
-
 
 #ifdef __cplusplus
 }

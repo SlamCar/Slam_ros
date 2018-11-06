@@ -12,7 +12,8 @@ Communcation::Communcation()
     
     feedBackPub_ = nh.advertise<msgs::FeedBack>("feedback",100);
 
-    setCommunicateType(CommunicateType::SERIAL);
+    updater_[STM32_FEED_BACK] = boost::bind(&Communcation::updateFeeback, this, _1);
+    updater_[STM32_HEART_BEAT] = boost::bind(&Communcation::updateHeartbeat, this, _1);
 }
 
 Communcation::~Communcation()
@@ -34,6 +35,8 @@ Communcation::~Communcation()
 
 bool Communcation::init()
 {
+    setCommunicateType(CommunicateType::SERIAL);
+
     switch(Type_)
     {
         case CommunicateType::SERIAL: return serialInit();
@@ -86,18 +89,11 @@ void Communcation::updateDataBase()
             ROS_WARN("data check error!");
             return;
         }
-
-        switch(RXbuffer.dataId())
+        else
         {
-            case STM32_FEED_BACK: 
-                updateFeeback(RXbuffer.body());
-                break;
-
-            default:  
-                ROS_WARN("no this dataId!!! ErrorId[%x]",RXbuffer.dataId());
-                break;
+            auto update = updater_.at(RXbuffer.dataId());
+            update(RXbuffer);
         }
-    
 
         if (loop.cycleTime() > ros::Duration(1.0 / ReciveFrequency_))
         {
@@ -215,15 +211,20 @@ void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
  
 }
 
-void Communcation::updateFeeback(uint8_t* data)
+void Communcation::updateFeeback(DataPack msg)
 {
     ROS_DEBUG("[updateFeeback]");
-
+    
     DataBase* db = DataBase::get();
     
-    memcpy(&db->feedbackData_, data, sizeof(db->feedbackData_));  
+    memcpy(&db->feedbackData_, msg.data(), sizeof(db->feedbackData_));  
     ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",
                 db->feedbackData_.Velocity, db->feedbackData_.Angle);
+}
+
+void Communcation::updateHeartbeat(DataPack msg)
+{
+    ROS_DEBUG("[updateHeartbeat]");
 }
 
 

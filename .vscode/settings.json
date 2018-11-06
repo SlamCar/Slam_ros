@@ -59,5 +59,5 @@
     },
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "C_Cpp.errorSquiggles": "Disabled",
-    "python.pythonPath": "/usr/bin/python3"
+    "python.pythonPath": "/usr/bin/python"
 }
