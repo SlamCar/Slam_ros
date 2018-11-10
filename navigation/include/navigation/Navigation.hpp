@@ -48,7 +48,7 @@ class Navigation
     boost::shared_ptr<boost::thread> executor_;
 
     ros::Publisher cmdVelPub_;
-    ros::Subscriber feedBackSub_
+    ros::Subscriber feedBackSub_;
   
     boost::shared_ptr<boost::thread> test_;
 

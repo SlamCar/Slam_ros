@@ -4,12 +4,14 @@ import rospy
 from msgs.msg import CmdVel
 import sys, select, termios, tty
 
-helpMsg = """
+helpDoc = """
 Reading from the keyboard  and Publishing to cmd_vel!
 ---------------------------
 Moving around:
-    w
-a   s   d
+           w :[forward]
+a :[left]  s :[back]    d :[right]
+
+r :[reset]
 ---------------------------
 CTRL-C to quit
 """
@@ -19,6 +21,7 @@ moveKeys = {
     's':(-0.1,0),
     'a':(0,10),
     'd':(0,-10),
+	'q':(0,0)
 }
 
 def getKey():
@@ -41,21 +44,22 @@ if __name__ == "__main__":
 	angle = rospy.get_param("~angle", 0.0)
 
 	try:
-		print helpMsg
+		print helpDocr
 		print vel(speed,angle)
 		while(1):
 			key = getKey()
-			if key in moveKeys.keys():
-				speed = moveKeys[key][0]
-				angle = moveKeys[key][1]
+			print(key)
+			# if key in moveKeys.keys():
+			# 	speed = moveKeys[key][0]
+			# 	angle = moveKeys[key][1]
 
-				print(vel(speed,angle))
+			# 	print(vel(speed,angle))
 
-			else:
-				speed = 0
-				angle = 0
-				if (key == '\x03'):
-					break
+			# else:
+			# 	speed = 0
+			# 	angle = 0
+			# 	if (key == '\x03'):
+			# 		break
 
 			cmdVel = CmdVel()
 			cmdVel.driverVelocity = speed
