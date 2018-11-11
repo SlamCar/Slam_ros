@@ -8,8 +8,8 @@ helpMsg = """
 Reading from the keyboard  and Publishing to cmd_vel!
 ---------------------------
 Moving around:
-    w
-a   s   d
+           w :[forward]
+a :[left]  s :[back]    d :[right]
 ---------------------------
 CTRL-C to quit
 """
