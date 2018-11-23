@@ -68,12 +68,18 @@ class DataPack : public ProtocalPack
 
     inline uint16_t dataId() const { return msg_.head_.dataId; }
     inline uint16_t len() const { return msg_.head_.dataLen; }
+    // inline uint16_t crc() const 
+    // {
+    //     uint16_t crc = 0;
+    //     std::memcpy(reinterpret_cast<uint8_t *>(&crc), &msg_.byData_[msg_.head_.dataLen], sizeof(uint16_t));
+    //     return crc;
+    // }
 
     inline uint8_t *data() { return reinterpret_cast<uint8_t *>(&msg_); }
     inline uint8_t *body() 
     { 
         #if 0
-        for(int t = 0; t < 8; t++)
+        for(auto t = 0; t < msg_.head_.dataLen; t++)
             ROS_INFO("[0x%02x]",msg_.byData_[t]);
         #endif 
            
@@ -85,16 +91,27 @@ class DataPack : public ProtocalPack
         return HEADER_BYTESIZE + BODY_MAX_BYTESIZE + CRC_BYTESIZE;
     }
 
+    inline std::size_t availableSize()
+    {
+        return HEADER_BYTESIZE + msg_.head_.dataLen + CRC_BYTESIZE;
+    }
+
     inline void generateCrc()
     {
         uint16_t crc = crcVerify(reinterpret_cast<uint8_t *>(&msg_), HEADER_BYTESIZE + msg_.head_.dataLen);
-        msg_.check_ = crc;
+        std::memcpy(&msg_.byData_[msg_.head_.dataLen],reinterpret_cast<uint8_t *>(&crc), sizeof(uint16_t));
     }
 
     bool checkCrc()
     {
+        uint16_t msgCrc = 0;
+        std::memcpy(reinterpret_cast<uint8_t *>(&msgCrc), &msg_.byData_[msg_.head_.dataLen], sizeof(uint16_t));
+
         uint16_t crc = crcVerify(reinterpret_cast<uint8_t *>(&msg_), HEADER_BYTESIZE + len());
-        return msg_.check_ == crc;
+        #if 0
+        ROS_DEBUG("right crc:[%x],receive crc:[%x]", msgCrc, crc);
+        #endif
+        return msgCrc == crc;
     }
 
   private: 

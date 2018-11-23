@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 #define HEADER_BYTESIZE             6
-#define BODY_MAX_BYTESIZE           8
+#define BODY_MAX_BYTESIZE           20
 #define CRC_BYTESIZE                2
 
 #define MODULEID                    0x039Cu
@@ -33,9 +33,9 @@ enum CmdId
     /**
      * STM32 -> IPC || QT
      */
-    STM32_FEED_BACK       = 0X5010,
-    STM32_HEART_BEAT      = 0x6010,
-    STM32_TASK_FINISH     = 0x7010,
+    STM32_FEED_BACK       = 0x5010u,
+    STM32_HEART_BEAT      = 0x6010u,
+    STM32_TASK_FINISH     = 0x7010u,
 };
 
 typedef struct DataHead_
@@ -49,8 +49,7 @@ typedef struct DataHead_
 typedef struct SerialPackage_
 {
     Head head_;      // fixed for MODULEID  9.24  birthday
-    uint8_t byData_[BODY_MAX_BYTESIZE]; // data content, max size is 50
-    uint16_t check_;//append crc16
+    uint8_t byData_[BODY_MAX_BYTESIZE + CRC_BYTESIZE]; // data content, max size is 20 append crc16
 } SerialPackage;
 
 typedef struct IpcCommand_
