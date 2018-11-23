@@ -1,7 +1,7 @@
 #include "Communcation.hpp"
 
 Communcation::Communcation()
-    : ConnectState_(false),ReciveFrequency_(50.0),SendFrequency_(5.0)
+    : ConnectState_(false),ReciveFrequency_(50.0),SendFrequency_(50.0)
 {
     ros::NodeHandle nh;
     ros::NodeHandle private_nh("~");
@@ -77,22 +77,34 @@ void Communcation::updateDataBase()
 
         if(serial_.isfree())
         {
-            serial_.read(RXbuffer.data(), (  HEADER_BYTESIZE 
-                                            + BODY_MAX_BYTESIZE
-                                            + CRC_BYTESIZE ));
-
+            auto dataSize = serial_.read(RXbuffer.data());
             ROS_DEBUG("dataId:[%x]",RXbuffer.dataId());
-        }
+            
+            #if 0
+            ROS_DEBUG("receicve data size: %d",static_cast<int>(dataSize));
+            RXbuffer.body();
+            #endif
 
-        if(!RXbuffer.checkCrc())
-        {
-            ROS_WARN("data check error!");
-            return;
-        }
-        else
-        {
-            auto update = updater_.at(RXbuffer.dataId());
-            update(RXbuffer);
+            try
+            {
+                if(!RXbuffer.checkCrc())
+                {
+                    ROS_WARN("data check error!");
+                }
+                else if(0x0000 == RXbuffer.dataId())
+                {
+                    ROS_WARN("empty data");
+                }
+                else 
+                {
+                    auto update = updater_.at(RXbuffer.dataId());
+                    update(RXbuffer);
+                }
+            }
+            catch (const std::out_of_range &e)
+            {
+                ROS_ERROR("No such command handler: %x", RXbuffer.dataId());
+            }
         }
 
         if (loop.cycleTime() > ros::Duration(1.0 / ReciveFrequency_))
@@ -177,14 +189,16 @@ void Communcation::sendCmd()
 {
     DataBase* db = DataBase::get();
 
-    DataPack cmdmsg(CMD_IPC_COMMOND);
-    cmdmsg.setLen(sizeof(db->cmdvelData_));
-    cmdmsg.setBody(reinterpret_cast<uint8_t *>(&db->cmdvelData_), sizeof(db->cmdvelData_));
-    cmdmsg.generateCrc();
+    DataPack cmdMsg(CMD_IPC_COMMOND);
+    cmdMsg.setLen(sizeof(db->cmdvelData_));
+    cmdMsg.setBody(reinterpret_cast<uint8_t *>(&db->cmdvelData_), sizeof(db->cmdvelData_));
+    cmdMsg.generateCrc();
 
-    serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
-                                      + BODY_MAX_BYTESIZE
-                                      + CRC_BYTESIZE); 
+    serial_.write((uint8_t *)&cmdMsg, cmdMsg.availableSize()); 
+   
+    #if 1
+    ROS_DEBUG("send cmdMsg size : %d", static_cast<int>(cmdMsg.availableSize()));
+    #endif
 }
 
 void Communcation::sendFeeback()
@@ -208,7 +222,6 @@ void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
     db->cmdvelData_.steeringAngle = cmdVel->steeringAngle;
     ROS_DEBUG("update Cmd msg: Velocity = %f , Angle = %f",
                 db->cmdvelData_.driverVelocity, db->cmdvelData_.steeringAngle);
- 
 }
 
 void Communcation::updateFeeback(DataPack msg)
@@ -217,7 +230,7 @@ void Communcation::updateFeeback(DataPack msg)
     
     DataBase* db = DataBase::get();
     
-    memcpy(&db->feedbackData_, msg.data(), sizeof(db->feedbackData_));  
+    memcpy(&db->feedbackData_, msg.body(), sizeof(db->feedbackData_));  
     ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",
                 db->feedbackData_.Velocity, db->feedbackData_.Angle);
 }
