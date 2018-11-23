@@ -1,10 +1,12 @@
 #include "Communcation.hpp"
 
 Communcation::Communcation()
-    : ConnectState_(false),ReciveFrequency_(50.0),SendFrequency_(5.0)
+    : ConnectState_(false),ReciveFrequency_(50.0),SendFrequency_(20.0),CommuncateFrenquency_(50.0)
 {
     ros::NodeHandle nh;
     ros::NodeHandle private_nh("~");
+    // private_nh._param("receice_frequency", ReciveFrequency_, 50.0);
+    // private_nh._param("send_frequency", SendFrequency_, 20.0);
 
     cmdVelSub_ = nh.subscribe<msgs::CmdVel>("cmdvel",
                                             10,
@@ -12,7 +14,7 @@ Communcation::Communcation()
     
     feedBackPub_ = nh.advertise<msgs::FeedBack>("feedback",100);
 
-    updater_[STM32_FEED_BACK] = boost::bind(&Communcation::updateFeeback, this, _1);
+    updater_[STM32_FEED_BACK]  = boost::bind(&Communcation::updateFeeback, this, _1);
     updater_[STM32_HEART_BEAT] = boost::bind(&Communcation::updateHeartbeat, this, _1);
 }
 
@@ -53,19 +55,18 @@ void Communcation::run()
     ROS_INFO_STREAM("MCU communcation started...");
 
     receiveThread_ = boost::make_shared<boost::thread>
-                    (boost::bind(&Communcation::updateDataBase, this));
+                    (boost::bind(&Communcation::reveiveData, this));
     
     sendThread_ = boost::make_shared<boost::thread>
                     (boost::bind(&Communcation::sendData, this));
 }
 
-void Communcation::updateDataBase()
+void Communcation::reveiveData()
 {
-    // SerialPackage RXbuffer;
     DataPack RXbuffer;
 
     ros::Rate loop(ReciveFrequency_);
-    ROS_DEBUG("[updateDataBase...]");
+    ROS_DEBUG("[reveiveData...]");
 
     while (ros::ok())
     {
@@ -77,22 +78,34 @@ void Communcation::updateDataBase()
 
         if(serial_.isfree())
         {
-            serial_.read(RXbuffer.data(), (  HEADER_BYTESIZE 
-                                            + BODY_MAX_BYTESIZE
-                                            + CRC_BYTESIZE ));
-
+            auto dataSize = serial_.read(RXbuffer.data());
             ROS_DEBUG("dataId:[%x]",RXbuffer.dataId());
+            
+            #if 0
+            ROS_DEBUG("receicve data size: %d",static_cast<int>(dataSize));
+            RXbuffer.body();
+            #endif
         }
 
-        if(!RXbuffer.checkCrc())
+        try
         {
-            ROS_WARN("data check error!");
-            return;
+            if(!RXbuffer.checkCrc())
+            {
+                ROS_WARN("data check error!");
+            }
+            else if(0x0000 == RXbuffer.dataId())
+            {
+                ROS_WARN("empty data");
+            }
+            else 
+            {
+                auto update = updater_.at(RXbuffer.dataId());
+                update(RXbuffer);
+            }
         }
-        else
+        catch (const std::out_of_range &e)
         {
-            auto update = updater_.at(RXbuffer.dataId());
-            update(RXbuffer);
+            ROS_ERROR("No such command handler: %x", RXbuffer.dataId());
         }
 
         if (loop.cycleTime() > ros::Duration(1.0 / ReciveFrequency_))
@@ -148,18 +161,13 @@ bool Communcation::serialInit()
     
     ROS_DEBUG("CommunicateType: [Serial mode].");
     
-    if(serial_.connect())
-    {
-        ROS_INFO("connected to main board"); 
-    }
-    else
-    {
-        ROS_ERROR("can't connect to main board!!! ");
-        return false;
-    }
-
     ros::Duration(2).sleep(); //wait for device
-    ROS_INFO("end sleep"); 
+
+    while (ros::ok() && !serial_.connect())
+    {
+        ROS_WARN_STREAM("Retrying connect to serial device...");
+        ros::Duration(2.0).sleep();
+    }
 
     ConnectState_ = true;
 
@@ -177,14 +185,16 @@ void Communcation::sendCmd()
 {
     DataBase* db = DataBase::get();
 
-    DataPack cmdmsg(CMD_IPC_COMMOND);
-    cmdmsg.setLen(sizeof(db->cmdvelData_));
-    cmdmsg.setBody(reinterpret_cast<uint8_t *>(&db->cmdvelData_), sizeof(db->cmdvelData_));
-    cmdmsg.generateCrc();
+    DataPack cmdMsg(CMD_IPC_COMMOND);
+    cmdMsg.setLen(sizeof(db->cmdvelData_));
+    cmdMsg.setBody(reinterpret_cast<uint8_t *>(&db->cmdvelData_), sizeof(db->cmdvelData_));
+    cmdMsg.generateCrc();
 
-    serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
-                                      + BODY_MAX_BYTESIZE
-                                      + CRC_BYTESIZE); 
+    serial_.write((uint8_t *)cmdMsg.data(), cmdMsg.availableSize()); 
+   
+    #if 0
+    ROS_DEBUG("send cmdMsg size : %d", static_cast<int>(cmdMsg.availableSize()));
+    #endif
 }
 
 void Communcation::sendFeeback()
@@ -208,16 +218,20 @@ void Communcation::updateCmd(const msgs::CmdVel::ConstPtr &cmdVel)
     db->cmdvelData_.steeringAngle = cmdVel->steeringAngle;
     ROS_DEBUG("update Cmd msg: Velocity = %f , Angle = %f",
                 db->cmdvelData_.driverVelocity, db->cmdvelData_.steeringAngle);
- 
 }
 
 void Communcation::updateFeeback(DataPack msg)
 {
     ROS_DEBUG("[updateFeeback]");
     
+    if(STM32_FEED_BACK != msg.dataId())
+    {
+        ROS_WARN("dataId error !!!");
+    }
+    
     DataBase* db = DataBase::get();
     
-    memcpy(&db->feedbackData_, msg.data(), sizeof(db->feedbackData_));  
+    memcpy(&db->feedbackData_, msg.body(), sizeof(db->feedbackData_));  
     ROS_DEBUG("update feedback msg: Velocity = %f , Angle = %f",
                 db->feedbackData_.Velocity, db->feedbackData_.Angle);
 }

@@ -1,18 +1,22 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
-#include <boost/assign/list_of.hpp>
+#include <ros/ros.h>
 #include <string>
 #include <vector>
-#include <ros/ros.h>
 #include <map>
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/assign/list_of.hpp>
 
 #include "msgs/CmdVel.h"
 #include "msgs/FeedBack.h"
 #include "SerialPack.hpp"
 #include "UART_Interface.hpp"
 #include "DataBase.hpp"
+
+// typedef boost::shared_mutex Mutex;
+// typedef boost::unique_lock<Mutex>  WriteLock;
+// typedef boost::shared_lock<Mutex>  ReadLock;
 
 enum class CommunicateType : uint32_t
 {
@@ -45,12 +49,13 @@ class Communcation
     bool serialInit();
     bool udpInit();
     
-    void updateDataBase();
+    void reveiveData();
     void sendData();
     
     bool ConnectState_;
     double ReciveFrequency_;
     double SendFrequency_;
+    double CommuncateFrenquency_;
     CommunicateType Type_;                      
     McuSerial serial_;
     // RobotConfig bdg;

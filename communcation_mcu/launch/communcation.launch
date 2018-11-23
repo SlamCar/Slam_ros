@@ -1,0 +1,10 @@
+<launch>
+     <!-- set logs -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find communcation_mcu)/config/log.conf"/> 
+
+    <!-- Run communcation_mcu node. -->
+    <node pkg="communcation_mcu" type="communcation_mcu_node" name="communcation_mcu_node" respawn="true" output="screen">
+    </node>
+
+    
+</launch>

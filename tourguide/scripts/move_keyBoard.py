@@ -44,22 +44,22 @@ if __name__ == "__main__":
 	angle = rospy.get_param("~angle", 0.0)
 
 	try:
-		print helpDocr
+		print helpDoc
 		print vel(speed,angle)
 		while(1):
 			key = getKey()
 			print(key)
-			# if key in moveKeys.keys():
-			# 	speed = moveKeys[key][0]
-			# 	angle = moveKeys[key][1]
+			if key in moveKeys.keys():
+				speed = moveKeys[key][0]
+				angle = moveKeys[key][1]
 
-			# 	print(vel(speed,angle))
+				print(vel(speed,angle))
 
-			# else:
-			# 	speed = 0
-			# 	angle = 0
-			# 	if (key == '\x03'):
-			# 		break
+			else:
+				speed = 0
+				angle = 0
+				if (key == '\x03'):
+					break
 
 			cmdVel = CmdVel()
 			cmdVel.driverVelocity = speed
