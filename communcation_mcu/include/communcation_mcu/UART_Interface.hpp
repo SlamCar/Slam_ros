@@ -125,23 +125,12 @@ public:
         {
             try
             {
-                // size_t read_size = serialPort_.read(buff, HEADER_BYTESIZE + 10);
-                size_t read_size = serialPort_.read(buff, serialPort_.available());
-                if (read_size > (HEADER_BYTESIZE + BODY_MAX_BYTESIZE + CRC_BYTESIZE))
+                size_t read_size = serialPort_.read(buff, size);
+                if (read_size != size)
                 {
-                    ROS_WARN("Serial read overflow, size:%d.", static_cast<int>(read_size));
-                    return 0;
+                    ROS_WARN("Serial read %d bytes data, but we need %d bytes.", (int)read_size, (int)size);
+                    // serialPort_.flushInput();
                 }
-                
-                #if 0
-                uint8_t *data = buff;
-                for(size_t t = 0; t < read_size; t++)
-                {
-                    ROS_DEBUG("[%x]",*data);
-                    data ++;
-                }
-                ROS_DEBUG("--------------------");
-                #endif
 
                 return read_size;
             }
@@ -211,6 +200,28 @@ public:
                 ROS_ERROR_STREAM(e.what());
                 serialPort_.close();
             }
+        }
+    }
+
+    /**
+     * \brief data sync
+     * \param buff data to sync
+     * \param sync data size
+     */
+    void sync(const uint8_t* buff, size_t size)
+    {
+        for (size_t i = 0; i < size && ros::ok();)
+        {
+            uint8_t byte = 0;
+
+            if (sizeof(uint8_t) == read(&byte, sizeof(uint8_t)) && buff[i] == byte)
+            {
+                i++;
+                continue;
+            }
+
+            ROS_WARN_STREAM("Sync header failed!");
+            i = 0;
         }
     }
 

@@ -80,32 +80,17 @@ void Communcation::reveiveData()
         {
             auto dataSize = serial_.read(RXbuffer.data());
             ROS_DEBUG("dataId:[%x]",RXbuffer.dataId());
-            
-            #if 0
-            ROS_DEBUG("receicve data size: %d",static_cast<int>(dataSize));
-            RXbuffer.body();
-            #endif
         }
 
-        try
+        if(!RXbuffer.checkCrc())
         {
-            if(!RXbuffer.checkCrc())
-            {
-                ROS_WARN("data check error!");
-            }
-            else if(0x0000 == RXbuffer.dataId())
-            {
-                ROS_WARN("empty data");
-            }
-            else 
-            {
-                auto update = updater_.at(RXbuffer.dataId());
-                update(RXbuffer);
-            }
+            ROS_WARN("data check error!");
+            return;
         }
-        catch (const std::out_of_range &e)
+        else
         {
-            ROS_ERROR("No such command handler: %x", RXbuffer.dataId());
+            auto update = updater_.at(RXbuffer.dataId());
+            update(RXbuffer);
         }
 
         if (loop.cycleTime() > ros::Duration(1.0 / ReciveFrequency_))
@@ -190,11 +175,9 @@ void Communcation::sendCmd()
     cmdMsg.setBody(reinterpret_cast<uint8_t *>(&db->cmdvelData_), sizeof(db->cmdvelData_));
     cmdMsg.generateCrc();
 
-    serial_.write((uint8_t *)cmdMsg.data(), cmdMsg.availableSize()); 
-   
-    #if 0
-    ROS_DEBUG("send cmdMsg size : %d", static_cast<int>(cmdMsg.availableSize()));
-    #endif
+    serial_.write((uint8_t *)&cmdmsg, HEADER_BYTESIZE 
+                                      + BODY_MAX_BYTESIZE
+                                      + CRC_BYTESIZE); 
 }
 
 void Communcation::sendFeeback()
